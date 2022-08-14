@@ -11,6 +11,50 @@ print(d1["hello"])
 keys = [ "hello", "are_you_there", "world" ]
 for key in keys:
   print('-- Key:', key)
-  print('--- Value:', d1[key])
 
+  value = d1[key] if key in d1 else '없는데요'
+  # if key in d1:
+  #   value = d1[key]
+  # else:
+  #   value = '없는데요'
 
+  print('--- Value:', value)
+
+# C/C++/Java 등에서 사용하는 3항연산자 a ? b : c 를
+# python 에서는 b if a else c 형태로 사용한다
+# 조금 더 영어문장스럽게 사용한다고 할 수 있다
+
+words = [
+  "flagrant",
+  "lawmaker",
+  "allow",
+  "alumina",
+  "foxglove",
+  "fiche",
+  "concern",
+  "kiosk",
+  "clean",
+  "especially",
+  "wanton",
+  "addle",
+  "agitate",
+  "whinchat",
+]
+
+print()
+print('-- 각 글자별로 시작하는 단어가 몇개 있는제 세는 프로그램 --')
+counts = dict() # Dictionary 를 초기화한다
+for word in words: # 모든 단어들에 대하여
+  first_ch = word[0] # 단어의 첫글자를 알아낸 뒤
+  if not first_ch in counts: # Dictionary 에 해당 Key 가 없으면 
+    counts[first_ch] = 0      # 만들고 0 으로 초기값을 준다
+  counts[first_ch] += 1      # 해당 Key 의 Value 를 1 증가시킨다 
+
+for ch in counts.keys():
+  print(ch, counts[ch])
+
+print()
+print('-- Dictionary 는 빨리 찾는 게 가장 중요한 구조라서 Key 들이 정렬되어 있지 않다 --')
+print('-- Key 들을 정렬한 뒤에 루프를 돌아도 좋지만, 보통 그럴 일은 잘 없다 --')
+for ch in sorted(counts.keys()):
+  print(ch, counts[ch])
