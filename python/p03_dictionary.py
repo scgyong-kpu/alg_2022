@@ -50,11 +50,27 @@ for word in words: # 모든 단어들에 대하여
     counts[first_ch] = 0      # 만들고 0 으로 초기값을 준다
   counts[first_ch] += 1      # 해당 Key 의 Value 를 1 증가시킨다 
 
-for ch in counts.keys():
-  print(ch, counts[ch])
+# for ch in counts.keys():
+#   print(ch, counts[ch])
+print(counts)
 
 print()
 print('-- Dictionary 는 빨리 찾는 게 가장 중요한 구조라서 Key 들이 정렬되어 있지 않다 --')
+print('-- 하지만 Python 3.6 이후부터는 추가 순서가 보장된다 --')
 print('-- Key 들을 정렬한 뒤에 루프를 돌아도 좋지만, 보통 그럴 일은 잘 없다 --')
 for ch in sorted(counts.keys()):
   print(ch, counts[ch])
+
+print()
+print('-- 매번 Key 가 있는지 찾아보는 것이 귀찮을 때가 있다. 이럴때는 defaultdict 를 쓴다--')
+print('-- defaultdict(XXX) 로 생성된 것은 Key 가 존재하지 않으면 XXX() 로 값을 만든다--')
+from collections import defaultdict # import collections 라고 했다면
+counts2 = defaultdict(int)          # collections.defaultdict 라고 써야 한다
+for word in words: # 모든 단어들에 대하여
+  first_ch = word[0] # 단어의 첫글자를 알아낸 뒤
+  counts2[first_ch] += 1      # 해당 Key 의 Value 를 1 증가시킨다 
+print(counts2)
+
+print('-- 존재하지 않는 Key 가 들어오면 int() 즉 0 값이 들어 있었던 것으로 간주한다')
+print(int(), counts2['hello']) # 둘 다 모두 0 값이 된다
+print(counts2)
