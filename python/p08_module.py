@@ -70,7 +70,7 @@ hello.set_something(123)
 something = hello.get_something()
 print(f'{something=}')
 
-from hello import Dog
+from hello import Jindogae as Dog
 d1 = Dog()
 d2 = Dog()
 d1.bark()
