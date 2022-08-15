@@ -42,3 +42,14 @@ print(f'배열 중에서 여러 개 골라준다: {random.sample(candidates, 3)=
 random.shuffle(candidates)
 print(f'배열 내용을 섞어준다: {candidates=}')
 
+print()
+import heapq
+numbers = list(range(20))
+random.shuffle(numbers)
+print(f'원래 섞인 배열: {numbers=}')
+heapq.heapify(numbers) # heapify 는 정렬과는 다르다. 정렬보다 빠르게 heap 구조로까지만 만든다
+print(f'Heapify 한 후: {numbers=}')
+smallest = heapq.heappop(numbers)
+print(f'가장 작은 것 {smallest=} 를 꺼낸 후: {numbers=}') 
+# 여전히 정렬은 되어 있지 않지만 heap 구조여서 가장 작은 수가 맨 앞에 있다
+
