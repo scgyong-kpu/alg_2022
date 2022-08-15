@@ -86,6 +86,7 @@ class SearchVisualizer(ArrayVisualizer):
   def setup(self, data):
     self.found_index = -1
     self.compare_index = -1
+    self.lt_gt = False
     super().setup(data)
 
   def compare(self, index):
@@ -100,6 +101,10 @@ class SearchVisualizer(ArrayVisualizer):
 
   def draw_content(self):
     super().draw_content()
+    self.draw_upper_text()
+    self.draw_lower_text()
+
+  def draw_upper_text(self):
     if self.found_index >= 0:
       rect = self.get_rect(self.found_index)
       rect[1] -= self.separator_size
@@ -108,6 +113,9 @@ class SearchVisualizer(ArrayVisualizer):
     else:
       xy = self.separator_size, self.separator_size
       self.draw_text(f'{self.data.to_find} Not Found', xy, center=False, font=self.big_font)
+
+  def draw_lower_text(self):
+    # print(f'draw_lower_text: {self.compare_index=}')
     if self.compare_index >= 0:
       rect = self.get_rect(self.compare_index)
       rect[1] += rect[3]
@@ -115,11 +123,18 @@ class SearchVisualizer(ArrayVisualizer):
 
       value = self.data.array[self.compare_index]
       if value == self.data.to_find:
-        text = f'{value} == {self.data.to_find}'
+        op = '=='
         font = self.big_font
       else:
-        text = f'{value} != {self.data.to_find}'
+        if self.lt_gt:
+          if value > self.data.to_find:
+            op = '>'
+          else:
+            op = '<'
+        else:
+          op = '!='
         font = self.small_font
+      text = f'{value} {op} {self.data.to_find}'
       self.draw_box(rect, text, no_line=True, no_body=True, font=font)
 
   def draw_cell(self, index):
@@ -132,3 +147,27 @@ class SearchVisualizer(ArrayVisualizer):
       color = clr.back
     self.draw_box(rect, text=str(self.data.array[index]), body_color=color)
 
+class BinarySearchVisualizer(SearchVisualizer):
+  def setup(self, data):
+    self.mark_left = -1
+    self.mark_right = -1
+    self.lt_gt = True
+    super().setup(data)
+
+  def mark(self, left, right):
+    self.mark_left = left
+    self.mark_right = right
+    self.draw()
+    self.wait(1000)
+
+  def draw_cell(self, index):
+    rect = self.get_rect(index)
+    if index == self.found_index:
+      color = clr.max
+    elif index == self.compare_index:
+      color = clr.compare
+    elif self.mark_left <= index and index <= self.mark_right:
+      color = clr.gray[0]
+    else:
+      color = clr.back
+    self.draw_box(rect, text=str(self.data.array[index]), body_color=color)

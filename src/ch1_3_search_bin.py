@@ -1,13 +1,20 @@
-from vis import SearchVisualizer as Visualizer
+from vis import BinarySearchVisualizer as Visualizer
 # from vis import Dummy as Visualizer
 
 def search(array, to_find):
-  for i in range(len(array)):
-    vis.compare(i)
-    if to_find == array[i]:
-      at = i
-      vis.update()
-      return at
+  left, right = 0, len(array) - 1
+  vis.mark(left, right)
+  while left <= right:
+    mid = (left + right) // 2
+    vis.compare(mid)
+    if array[mid] == to_find:
+      return mid
+    if array[mid] < to_find:
+      left = mid + 1
+    else:
+      right = mid - 1
+    vis.mark(left, right)
+
   vis.compare(-1)
   return -1
 
