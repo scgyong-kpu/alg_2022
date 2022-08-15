@@ -21,7 +21,24 @@ pt3 = [pt1[0] + dx, pt1[1] + dy]
 print(f'pt1 을 기준으로 {angle_degree:.2f}° 만큼 더 회전한 점은 [{pt3[0]:.2f}, {pt3[1]:.2f}] 이다')
 
 print()
+# 반올림=round, 버림=floor (바닥), 올림=ceil (천장)
 print(f'{angle_radian=} {round(angle_radian)=} {math.floor(angle_radian)=} {math.ceil(angle_radian)=}')
 
+# round 의 두번째 인자를 통해서 몇째자리에서 반올림할지 결정할 수 있다
 PIx100 = math.pi * 100
 print(f'{PIx100=} {round(PIx100, 2)=} {round(PIx100, -2)=}')
+
+print()
+import random
+print(f'0~1 사이의 랜덤한 숫자 세개 출력: {random.random()} {random.random()} {random.random()}')
+print(f'[10,15) 랜덤한 정수 세개 출력: {random.randrange(10, 15)} {random.randrange(10, 15)} {random.randrange(10, 15)}')
+print(f'[10,15] 랜덤한 정수 세개 출력: {random.randint(10, 15)} {random.randint(10, 15)} {random.randint(10, 15)}')
+# Python 에서는 대개 [inclusive, exclusive) 를 많이 쓰지만 randint 는 [inclusive, inclusive] 형태로 쓴다
+
+candidates = [ 10, 100, 123, 456, 789 ]
+print(f'배열 중에서 하나 골라준다: {random.choice(candidates)=}')
+print(f'배열 중에서 여러 개 골라준다: {random.sample(candidates, 3)=}')
+
+random.shuffle(candidates)
+print(f'배열 내용을 섞어준다: {candidates=}')
+
