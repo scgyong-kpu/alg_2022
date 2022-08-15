@@ -34,9 +34,17 @@ def m2s(pt): # pt 가 수학 좌표계이므로 pygame 의 좌표계로 변경�
 def d_line(pt1, pt2, color=BLACK):
   pg.draw.line(screen, color, m2s(pt1), m2s(pt2))
 
+def d_pt(pt,color=BLACK): # 점은 원그리기 함수를 활용하여 표현한다
+  pg.draw.circle(screen, color, m2s(pt), 5, 1)
+
 # x축과 y 축을 그려준다
 d_line([-450, 0], [450, 0]) 
 d_line([0, -450], [0, 450])
+
+# 세 개의 점을 그려 준다
+d_pt(pt1, RED)
+d_pt(pt2, GREEN)
+d_pt(pt3, BLUE)
 
 pg.display.flip()
 
