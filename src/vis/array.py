@@ -107,7 +107,7 @@ class SearchVisualizer(ArrayVisualizer):
       self.draw_box(rect, f'@{self.found_index}', no_line=True, no_body=True, font=self.big_font)
     else:
       xy = self.separator_size, self.separator_size
-      self.draw_text('Not Found', xy, center=False)
+      self.draw_text(f'{self.data.to_find} Not Found', xy, center=False, font=self.big_font)
     if self.compare_index >= 0:
       rect = self.get_rect(self.compare_index)
       rect[1] += rect[3]
