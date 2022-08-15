@@ -38,6 +38,8 @@ print('\n-- Python 은 class 생성자와 함수 호출 문법 구조가 같으�
 class Game:
   def __init__(self, name):
     self.name = name
+  def __repr__(self): # 이 객체가 문자열로 표현되어야 할 때 호출되는 함수. 비슷한 것으로 __str__() 도 있다
+    return f'Game("{self.name}")'
 
 games = list(map(Game, "helloworld"))
 print(games)
