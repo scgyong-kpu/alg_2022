@@ -82,3 +82,53 @@ class FindMaxVisualizer(ArrayVisualizer):
       color = clr.back
     self.draw_box(rect, text=str(self.data.array[index]), body_color=color)
 
+class SearchVisualizer(ArrayVisualizer):
+  def setup(self, data):
+    self.found_index = -1
+    self.compare_index = -1
+    super().setup(data)
+
+  def compare(self, index):
+    self.compare_index = index
+    self.draw()
+    self.wait(1000)
+
+  def update(self):
+    self.found_index = self.compare_index
+    self.draw()
+    self.wait(1000)
+
+  def draw_content(self):
+    super().draw_content()
+    if self.found_index >= 0:
+      rect = self.get_rect(self.found_index)
+      rect[1] -= self.separator_size
+      rect[3] = self.separator_size
+      self.draw_box(rect, f'@{self.found_index}', no_line=True, no_body=True, font=self.big_font)
+    else:
+      xy = self.separator_size, self.separator_size
+      self.draw_text('Not Found', xy, center=False)
+    if self.compare_index >= 0:
+      rect = self.get_rect(self.compare_index)
+      rect[1] += rect[3]
+      rect[3] = self.separator_size
+
+      value = self.data.array[self.compare_index]
+      if value == self.data.to_find:
+        text = f'{value} == {self.data.to_find}'
+        font = self.big_font
+      else:
+        text = f'{value} != {self.data.to_find}'
+        font = self.small_font
+      self.draw_box(rect, text, no_line=True, no_body=True, font=font)
+
+  def draw_cell(self, index):
+    rect = self.get_rect(index)
+    if index == self.found_index:
+      color = clr.max
+    elif index == self.compare_index:
+      color = clr.compare
+    else:
+      color = clr.back
+    self.draw_box(rect, text=str(self.data.array[index]), body_color=color)
+

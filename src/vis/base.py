@@ -224,7 +224,7 @@ class Visualizer:
         rect = img.get_rect(center=xy)
         screen.blit(img, rect)
       else:
-        screen.blit(img, [x, y])
+        screen.blit(img, xy)
 
 class TestVisualizer(Visualizer):
   def draw(self):
