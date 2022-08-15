@@ -53,3 +53,11 @@ smallest = heapq.heappop(numbers)
 print(f'가장 작은 것 {smallest=} 를 꺼낸 후: {numbers=}') 
 # 여전히 정렬은 되어 있지 않지만 heap 구조여서 가장 작은 수가 맨 앞에 있다
 
+print()
+import random as rnd
+print('모듈의 이름을 바꿔 부를 수 있다:', f'{rnd.randint(1,5)=}')
+from random import randint
+print(f'모듈에 소속된 이름 randint 를 내것으로 가져올 수 있다: {randint(1,5)=}')
+from random import randint as ri
+print(f'그마저도 내가 부르고 싶은 이름으로 부를 수 있다: {ri(1,5)=}')
+# 모듈을 교체할 때 import 구문만 바꾸고 코드 내부는 안 고쳐도 되는 장점이 있다
