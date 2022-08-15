@@ -61,3 +61,17 @@ print(f'모듈에 소속된 이름 randint 를 내것으로 가져올 수 있다
 from random import randint as ri
 print(f'그마저도 내가 부르고 싶은 이름으로 부를 수 있다: {ri(1,5)=}')
 # 모듈을 교체할 때 import 구문만 바꾸고 코드 내부는 안 고쳐도 되는 장점이 있다
+
+print()
+
+import hello
+hello.world()
+hello.set_something(123)
+something = hello.get_something()
+print(f'{something=}')
+
+from hello import Dog
+d1 = Dog()
+d2 = Dog()
+d1.bark()
+d2.bark()
