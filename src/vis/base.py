@@ -58,6 +58,7 @@ class Visualizer:
     self.apply_config()
     pg.display.set_caption(window_title)
     self.ctx = DrawContext()
+    self.paused = False
 
   def apply_config(self):
     global screen
@@ -129,8 +130,10 @@ class Visualizer:
           continue
         if e.type == pg.KEYDOWN and e.key == pg.K_SPACE:
           self.loop = True
+          self.paused = True
         elif e.type == pg.KEYUP and e.key == pg.K_SPACE:
           self.loop = False
+          self.paused = False
 
   def handle_event(self, e):
     if e.type == pg.QUIT:
@@ -147,7 +150,7 @@ class Visualizer:
       self.set_screen_size(-1)
     elif e.type == pg.KEYDOWN and e.key == pg.K_PERIOD:
       self.set_screen_size(1)
-    elif e.type == pg.MOUSEMOTION:
+    elif e.type == pg.MOUSEMOTION and self.paused:
       return self.on_mouse_motion()
     return False
 
@@ -156,19 +159,27 @@ class Visualizer:
 
   def wait_for_keydown(self):
     self.loop = True
+    self.paused = True
     while self.loop:
       for e in pg.event.get():
         if self.handle_event(e):
           continue
         if e.type == pg.KEYDOWN:
           self.loop = False
+    self.paused = False
 
   def end(self):
     self.loop = True
+    self.paused = True
     while self.loop:
       for e in pg.event.get():
+        if e.type == pg.KEYDOWN and e.key == pg.K_r:
+          self.speed = 1
+          self.loop = self.paused = False
+          return True
         self.handle_event(e)
     pg.quit()
+    return False
 
   def update_display(self):
     pg.display.flip()

@@ -15,10 +15,14 @@ def find_max(array):
 
 if __name__ == '__main__':
   vis = Visualizer('Find Max Value')
-  array = [45,20,35,60,55,10,90,85,25,75]
-  vis.setup(vis.get_main_module())
-  max, at = find_max(array)
-  print(f'{max=}, {at=}')
-  vis.end()
+  while True:
+    array = [45,20,35,60,55,10,90,85,25,75]
+    # from random import randrange
+    # array = [ randrange(100) for _ in range(30) ]
+    vis.setup(vis.get_main_module())
+    max, at = find_max(array)
+    print(f'{max=}, {at=}')
+    again = vis.end()
+    if not again: break
 
 
