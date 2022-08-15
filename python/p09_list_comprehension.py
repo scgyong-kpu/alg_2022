@@ -34,3 +34,10 @@ for i in range(26):
   dim3[y][x].append(chr(ord('a')+i)) # 고른 배열에다가 이번 글자를 추가함
 print(f' after: {dim3=}')
 
+print('\n-- Python 은 class 생성자와 함수 호출 문법 구조가 같으므로 class 이름도 map 에 쓸 수 있다 ')
+class Game:
+  def __init__(self, name):
+    self.name = name
+
+games = list(map(Game, "helloworld"))
+print(games)
