@@ -46,6 +46,12 @@ d_pt(pt1, RED)
 d_pt(pt2, GREEN)
 d_pt(pt3, BLUE)
 
+# Line 세 개를 그려서 각도가 보이도록 해 본다
+d_line(pt1, [pt1[0]+distance,pt1[1]], (251,180,174))
+d_line(pt1, pt2, (204,235,197))
+d_line(pt1, pt3, (179,205,227))
+
+
 pg.display.flip()
 
 loop = True
