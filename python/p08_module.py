@@ -25,6 +25,7 @@ RED, GREEN, BLUE = (255,0,0),(0,255,0),(0,0,255)
 BLACK, WHITE = (0,0,0), (255,255,255)
 pg.init()
 screen = pg.display.set_mode([900, 900])
+font = pg.font.SysFont("arial", 16)
 pg.display.set_caption('Test')
 screen.fill(WHITE)
 
@@ -34,17 +35,21 @@ def m2s(pt): # pt 가 수학 좌표계이므로 pygame 의 좌표계로 변경�
 def d_line(pt1, pt2, color=BLACK):
   pg.draw.line(screen, color, m2s(pt1), m2s(pt2))
 
-def d_pt(pt,color=BLACK): # 점은 원그리기 함수를 활용하여 표현한다
-  pg.draw.circle(screen, color, m2s(pt), 5, 1)
+def d_pt(pt,color=BLACK,name=None): # 점은 원그리기 함수를 활용하여 표현한다
+  xy = m2s(pt)
+  pg.draw.circle(screen, color, xy, 5, 1)
+  if name != None:
+    img = font.render(name, True, color)
+    screen.blit(img, xy)
 
 # x축과 y 축을 그려준다
 d_line([-450, 0], [450, 0]) 
 d_line([0, -450], [0, 450])
 
 # 세 개의 점을 그려 준다
-d_pt(pt1, RED)
-d_pt(pt2, GREEN)
-d_pt(pt3, BLUE)
+d_pt(pt1, RED, 'pt1')
+d_pt(pt2, GREEN, 'pt2')
+d_pt(pt3, BLUE, 'pt3')
 
 # Line 세 개를 그려서 각도가 보이도록 해 본다
 d_line(pt1, [pt1[0]+distance,pt1[1]], (251,180,174))
