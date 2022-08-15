@@ -64,13 +64,13 @@ print(f'그마저도 내가 부르고 싶은 이름으로 부를 수 있다: {ri
 
 print()
 
-import hello
+import another_module as hello
 hello.world()
 hello.set_something(123)
 something = hello.get_something()
 print(f'{something=}')
 
-from hello import Jindogae as Dog
+from another_module import CrazyDog as Dog
 d1 = Dog()
 d2 = Dog()
 d1.bark()
