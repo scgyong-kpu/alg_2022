@@ -39,7 +39,6 @@ class Color:
   line = dark[0]
 
 WAIT_ONE_FRAME_MILLIS = 15
-screen = None
 
 class DrawContext:
   def kwarg(self): return self.__dict__
@@ -61,9 +60,8 @@ class Visualizer:
     self.paused = False
 
   def apply_config(self):
-    global screen
     screen_size = [ self.config.screen_width, self.config.screen_height ]
-    screen = pg.display.set_mode(screen_size)
+    self.screen = pg.display.set_mode(screen_size)
     self.small_font = pg.font.SysFont("arial", self.config.font_size) 
     self.big_font = pg.font.SysFont("arial", self.config.font_size * 2)
     self.separator_size = self.config.font_size * 3
@@ -114,7 +112,7 @@ class Visualizer:
     pass
 
   def clear(self, color = Color.back):
-    screen.fill(color)
+    self.screen.fill(color)
 
   def wait(self, millis):
     millis = int(millis / self.speed)
@@ -184,21 +182,18 @@ class Visualizer:
   def update_display(self):
     pg.display.flip()
 
-  def screen(self):
-    return screen
-
   def clip(self, rect):
-    screen.set_clip(rect)
+    self.screen.set_clip(rect)
 
   def draw_box(self, box, text=None, **args):
     border_radius = attr(args, 'border_radius', 0)
     if not attr(args, 'no_body', False):
       body_color = attr(args, 'body_color', Color.back)
-      pg.draw.rect(screen, body_color, box, border_radius=border_radius)
+      pg.draw.rect(self.screen, body_color, box, border_radius=border_radius)
     if not attr(args, 'no_line', False):
       line_color = attr(args, 'line_color', Color.line)
       width = attr(args, 'width', 1)
-      pg.draw.rect(screen, line_color, box, width, border_radius=border_radius)
+      pg.draw.rect(self.screen, line_color, box, width, border_radius=border_radius)
     if text != None:
       self.draw_text(text, pg.Rect(box).center, **args, center=True)
 
@@ -214,17 +209,17 @@ class Visualizer:
         img = font.render(line, True, color)
         if center:
           rect = img.get_rect(center=[x,y])
-          screen.blit(img, rect)
+          self.screen.blit(img, rect)
         else:
-          screen.blit(img, [x, y])
+          self.screen.blit(img, [x, y])
         y += self.config.font_size
     else:
       img = font.render(text, True, color)
       if center:
         rect = img.get_rect(center=xy)
-        screen.blit(img, rect)
+        self.screen.blit(img, rect)
       else:
-        screen.blit(img, xy)
+        self.screen.blit(img, xy)
 
 class TestVisualizer(Visualizer):
   def draw(self):
