@@ -5,6 +5,15 @@ class City:
     self.index = index
   def __repr__(self):
     return f'{self.name}({self.index}:{self.x:3d},{self.y:3d})'
+  def getName(self, **args):
+    name = self.name
+    if 'shows_city_index' in args and args['shows_city_index']:
+      name = f'{self.index}.{name}'
+    if 'shows_city_coord' in args and args['shows_city_coord']:
+      name = f'{name}({self.x},{self.y})'
+    if hasattr(self, 'weight'):
+      name = f'{name} {self.weight})'
+    return name
   @staticmethod
   def apply_index(cities):
     for i in range(len(cities)): 
@@ -1016,5 +1025,14 @@ five_letter_cities = [
 if __name__ == '__main__':
   # City.apply_index(five_letter_cities)
   print(f'{len(five_letter_cities)=}')
-  print(f'Samples: {five_letter_cities[:100]}')
+  print(f'Samples: {five_letter_cities[:30]}')
 
+  cities = five_letter_cities[:100]
+  # from vis import PlanarVisualizer as Visualizer
+  from vis import Dummy as Visualizer
+  vis = Visualizer('Cities Visualizer')
+  vis.setup(vis.get_main_module())
+  # for i in range(len(cities)):
+  #   vis.set_city_level(i, i % vis.LEVELS_COUNT)
+  vis.draw()
+  vis.end()
