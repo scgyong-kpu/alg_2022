@@ -4,9 +4,13 @@ class City:
     self.x, self.y = x, y
     self.index = index
   def __repr__(self):
-    return '%s(%d:%3d,%3d)' % (self.name, self.index, self.x, self.y)
+    return f'{self.name}({self.index}:{self.x:3d},{self.y:3d})'
 
 five_letter_cities = [
   City("Clean", 1336, 536),
   City("Prosy", 977, 860),
 ]
+
+if __name__ == '__main__':
+  print(five_letter_cities)
+
