@@ -147,12 +147,15 @@ class SearchVisualizer(ArrayVisualizer):
       color = clr.back
     self.draw_box(rect, text=str(self.data.array[index]), body_color=color)
 
+clr.range = clr.gray[2]
+clr.mid = clr.set1[0]
+
 class BinarySearchVisualizer(SearchVisualizer):
   def setup(self, data):
     self.mark_left = -1
     self.mark_right = -1
-    self.lt_gt = True
     super().setup(data)
+    self.lt_gt = True
 
   def mark(self, left, right):
     self.mark_left = left
@@ -160,14 +163,40 @@ class BinarySearchVisualizer(SearchVisualizer):
     self.draw()
     self.wait(1000)
 
+  def calc_coords(self):
+    super().calc_coords()
+    self.mark_y = self.table_y - self.config.font_size // 2
+
+  def draw_upper_text(self):
+    super().draw_upper_text()
+    if self.found_index >= 0:
+      return
+    valid_range = self.mark_left >= 0 and self.mark_left <= self.mark_right
+    lr_color = clr.set1[0]
+    mid_color = clr.set1[1]
+    if self.mark_left >= 0:
+      x,_,_,_ = self.get_rect(self.mark_left)
+      text = f'[{self.mark_left}' if valid_range else ']['
+      self.draw_text(text, [x, self.mark_y], text_color=lr_color)
+    if self.mark_right >= 0 and valid_range:
+      x,_,w,_ = self.get_rect(self.mark_right)
+      x += w
+      self.draw_text(f'{self.mark_right}]', [x, self.mark_y], text_color=lr_color)
+
+    mid = (self.mark_left + self.mark_right) // 2
+    if mid >= 0 and valid_range: # and mid == self.compare_index:
+      x,_,w,_ = self.get_rect(mid)
+      x += w // 2
+      self.draw_text(f'{mid}', [x, self.mark_y], text_color=mid_color)
+
   def draw_cell(self, index):
     rect = self.get_rect(index)
     if index == self.found_index:
       color = clr.max
     elif index == self.compare_index:
-      color = clr.compare
+      color = clr.mid
     elif self.mark_left <= index and index <= self.mark_right:
-      color = clr.gray[0]
+      color = clr.range
     else:
       color = clr.back
     self.draw_box(rect, text=str(self.data.array[index]), body_color=color)
