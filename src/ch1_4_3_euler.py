@@ -4,7 +4,10 @@ def start():
 
   cv = start_vertex # cv: current vertex
 
-  for _ in range(3): # while 로 변경할 예정이다. 임시로 세 번만 돌기로 한다
+  while True:
+    if len(adj_list[start_vertex]) == 0: break
+    # 시작점에 연결된 간선이 없을때까지 반복한다
+
     adjs = len(adj_list[cv]) 
     # 현재 점에서 연결된 점이 몇 개인가?
     # 한개뿐이라면 그리로 가면 되고 여러개라면 선택해야 한다
@@ -55,20 +58,6 @@ def start():
     print(f'{nv} 이(가) 추가되었다. {euler_circuit=}')
 
     cv = nv # 이제 nv 가 cv 가 되어 다음 루프를 계속한다
-
-''' 출력결과:
-
-0~1 간선을 삭제했을 때: cand=1 is_connected=True pts={0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
-cv=0 nv=1 adj_list[cv]=[9, 1]
-1 이(가) 추가되었다. euler_circuit=[1]
-2 는 유일한 길이다. 이쪽으로 갈 수밖에 없다
-cv=1 nv=2 adj_list[cv]=[2]
-2 이(가) 추가되었다. euler_circuit=[1, 2]
-2~3 간선을 삭제했을 때: cand=3 is_connected=True pts={0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
-cv=2 nv=3 adj_list[cv]=[10, 11, 3]
-3 이(가) 추가되었다. euler_circuit=[1, 2, 3]
-
-'''
 
 def connected_points(v, pts=None):
   # 연결 가능한 점을 모두 알기 위해 DFS (Depth First Search) 를 이용한다
