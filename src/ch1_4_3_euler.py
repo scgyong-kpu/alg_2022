@@ -4,12 +4,13 @@ def start():
 
   cv = start_vertex # cv: current vertex
 
-  if True: # 나중에 if 를 while 로 변경할 예정이다. 임시로 한 번만 돌기 위해 if 를 썼다
+  for _ in range(2): # while 로 변경할 예정이다. 임시로 두 번만 돌기로 한다
     adjs = len(adj_list[cv]) 
     # 현재 점에서 연결된 점이 몇 개인가?
     # 한개뿐이라면 그리로 가면 되고 여러개라면 선택해야 한다
     if adjs == 1:
       nv = adj_list[cv][0] # 다음 점은 하나밖에 없는 그곳으로 결정하자
+      print(f'{nv} 는 유일한 길이다. 이쪽으로 갈 수밖에 없다')
       # nv = next vertex
     else:
       # 여러 개 중에서 후보를 고를 예정이다
@@ -56,6 +57,9 @@ def start():
 
 0~1 간선을 삭제했을 때: cand=1 is_connected=True pts={0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
 1 이(가) 추가되었다. euler_circuit=[1]
+9 는 유일한 길이다. 이쪽으로 갈 수밖에 없다
+9 이(가) 추가되었다. euler_circuit=[1, 9]
+
 '''
 
 def connected_points(v, pts=set()):
