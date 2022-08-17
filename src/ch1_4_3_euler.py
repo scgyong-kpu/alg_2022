@@ -70,10 +70,11 @@ cv=2 nv=3 adj_list[cv]=[10, 11, 3]
 
 '''
 
-def connected_points(v, pts=set()):
+def connected_points(v, pts=None):
   # 연결 가능한 점을 모두 알기 위해 DFS (Depth First Search) 를 이용한다
   # 이미 방문한 점은 pts 라는 집합에 넣도록 하며
-  # 첫 호출시에는 빈 set 이 되도록 default argument 로 넣어 둔다 ( pts=set() )
+  # 첫 호출시에는 빈 set 이 되도록 default argument 로 넣어 둔다 ( pts=None )
+  if pts == None: pts = set()
 
   pts.add(v) # 이번 점을 넣고
   for w in adj_list[v]: # v 에 연결되는 모든 점들에 대해
