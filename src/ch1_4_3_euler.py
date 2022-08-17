@@ -7,7 +7,9 @@ def list_all_edges():
   print(f'{vertex_count=}')
   for u in range(vertex_count):
     ends = adj_list[u]
-    print(f'{u=} : {ends=}')
+    # print(f'{u=} : {ends=}')
+    for v in ends:
+      print(f'{u=}, {v=}')
 
 if __name__ == '__main__':
     adj_list = [
