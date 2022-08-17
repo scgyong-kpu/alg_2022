@@ -32,10 +32,13 @@ def start():
         adj_list[cv].append(cand)
         adj_list[cand].append(cv)
 
+        print(f'{cand=} {is_connected=} {pts=}')
+        # 원래는 연결되니 그만 해야 하지만 모든 점들을 확인해 보기로 한다
+
         # 연결된다면 이번 점으로 진행하기로 한다.
-        if is_connected:
-          nv = cand      # nv = next vertex
-          break
+        # if is_connected:
+        #   nv = cand      # nv = next vertex
+        #   break
 
         # 아니라면 다음 후보로 넘어간다
 
