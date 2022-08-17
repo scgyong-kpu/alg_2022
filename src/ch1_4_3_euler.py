@@ -8,6 +8,7 @@ def start():
     # 한개뿐이라면 그리로 가면 되고 여러개라면 선택해야 한다
     if adjs == 1:
       nv = adj_list[cv][0] # 다음 점은 하나밖에 없는 그곳으로 결정하자
+      # nv = next vertex
     else:
       # 여러 개 중에서 후보를 고를 예정이다
       # 이번 간선을 삭제하고도 돌아올 수 있다면 가도 좋은 것으로 판단하자
@@ -16,19 +17,30 @@ def start():
 
         # 간선을 임시로 제거해 본다. 
         # 간선을 양방향으로 저장하고 있으므로 둘 다 삭제해야 한다
+        adj_list[cv].remove(cand)
+        adj_list[cand].remove(cv)
 
         # cv 에서 cand 까지 연결 되는지 확인한다
         # cv 로부터 연결 가능한 모든 점을 받아서 그 안에 있는지 확인한다
+        pts = connected_points(cv)
+        is_connected = cand in pts
 
         # 연결되는지만 확인하려고 간선을 제거한 것이므로
         # 다시 복원시킨다
+        adj_list[cv].append(cand)
+        adj_list[cand].append(cv)
 
         # 연결된다면 이번 점으로 진행하기로 한다.
+        if is_connected:
+          nv = cand      # nv = next vertex
+          break
 
         # 아니라면 다음 후보로 넘어간다
 
-        pass
 
+def connected_points(v):
+  # 아직 구현 전이므로 임시로 False 를 리턴하는 함수만 만들어 둔다
+  return False
 
 def list_all_edges():
   vertex_count = len(adj_list)
