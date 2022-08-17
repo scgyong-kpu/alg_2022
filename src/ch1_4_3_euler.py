@@ -5,8 +5,9 @@ def start():
 def list_all_edges():
   vertex_count = len(adj_list)
   print(f'{vertex_count=}')
-
-  # 출력결과: vertex_count=13
+  for u in range(vertex_count):
+    ends = adj_list[u]
+    print(f'{u=} : {ends=}')
 
 if __name__ == '__main__':
     adj_list = [
