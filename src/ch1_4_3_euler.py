@@ -12,7 +12,9 @@ def start():
     else:
       # 여러 개 중에서 후보를 고를 예정이다
       # 이번 간선을 삭제하고도 돌아올 수 있다면 가도 좋은 것으로 판단하자
-      for cand in adj_list[cv]:
+
+      candidates = adj_list[cv][:]
+      for cand in candidates:
         # cand = 이번 점 으로 가도 좋은지 판단해 보는 후보선수
 
         # 간선을 임시로 제거해 본다. 
