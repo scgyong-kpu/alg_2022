@@ -1,8 +1,9 @@
 from vis.base import *
+from vis.color import *
 
 clr = Color()
-clr.compare = Color.pastel2[0]
-clr.max = Color.pastel2[1]
+clr_compare = Color.Moccasin
+clr_max = Color.Crimson
 
 class ArrayVisualizer(Visualizer):
   def setup(self, data):
@@ -75,11 +76,11 @@ class FindMaxVisualizer(ArrayVisualizer):
   def draw_cell(self, index):
     rect = self.get_rect(index)
     if index == self.max_index:
-      color = clr.max
+      color = clr_max
     elif index == self.compare_index:
-      color = clr.compare
+      color = clr_compare
     else:
-      color = clr.back
+      color = Color.back
     self.draw_box(rect, text=str(self.data.array[index]), body_color=color)
 
 class SearchVisualizer(ArrayVisualizer):
@@ -140,15 +141,12 @@ class SearchVisualizer(ArrayVisualizer):
   def draw_cell(self, index):
     rect = self.get_rect(index)
     if index == self.found_index:
-      color = clr.max
+      color = clr_max
     elif index == self.compare_index:
-      color = clr.compare
+      color = clr_compare
     else:
-      color = clr.back
+      color = Color.back
     self.draw_box(rect, text=str(self.data.array[index]), body_color=color)
-
-clr.range = clr.gray[2]
-clr.mid = clr.set1[0]
 
 class BinarySearchVisualizer(SearchVisualizer):
   def setup(self, data):
@@ -172,8 +170,8 @@ class BinarySearchVisualizer(SearchVisualizer):
     if self.found_index >= 0:
       return
     valid_range = self.mark_left >= 0 and self.mark_left <= self.mark_right
-    lr_color = clr.set1[0]
-    mid_color = clr.set1[1]
+    lr_color = Color.Indigo
+    mid_color = Color.DarkOliveGreen
     if self.mark_left >= 0:
       x,_,_,_ = self.get_rect(self.mark_left)
       text = f'[{self.mark_left}' if valid_range else ']['
@@ -192,11 +190,11 @@ class BinarySearchVisualizer(SearchVisualizer):
   def draw_cell(self, index):
     rect = self.get_rect(index)
     if index == self.found_index:
-      color = clr.max
+      color = Color.Crimson
     elif index == self.compare_index:
-      color = clr.mid
+      color = Color.OrangeRed
     elif self.mark_left <= index and index <= self.mark_right:
-      color = clr.range
+      color = Color.Cornsilk
     else:
-      color = clr.back
+      color = Color.back
     self.draw_box(rect, text=str(self.data.array[index]), body_color=color)

@@ -1,71 +1,6 @@
 import math
 from vis.base import *
 
-clr = Color()
-clr.city_body = Color.pastel2[0]
-clr.city_line = Color.set2[0]
-clr.city_name = Color.set3[0]
-clr.edge_value = color_argb('#1f3f1f')
-ctx_city_normal = {
-  'city_body_color': Color.pastel2[0],
-  'city_line_color': Color.set2[0],
-  'city_name_color': Color.set1[1],
-  # 'shows_city_index': True,
-  # 'shows_city_coord': True,
-}
-
-ctx_city_grayed = {
-  'city_body_color': Color.gray[0],
-  'city_line_color': Color.gray[1],
-  'city_name_color': Color.gray[1],
-}
-
-ctx_city_compare = {
-  'city_body_color': Color.pastel2[1],
-  'city_line_color': Color.set2[1],
-  'city_name_color': Color.dark[1],
-}
-ctx_city_mark = {
-  'city_body_color': Color.pastel2[2],
-  'city_line_color': Color.set2[2],
-  'city_name_color': Color.dark[2],
-}
-ctx_city_update = {
-  'city_body_color': Color.pastel2[3],
-  'city_line_color': Color.set2[3],
-  'city_name_color': Color.dark[3],
-}
-
-city_contexts = [
-  ctx_city_grayed, ctx_city_normal, ctx_city_compare, ctx_city_mark, ctx_city_update
-]
-
-ctx_edge_grayed = {
-  'edge_line_color': Color.gray[0],
-  'edge_value_color': Color.gray[1],
-}
-
-ctx_edge_normal = {
-  'edge_line_color': clr.line,
-  'edge_value_color': clr.edge_value,
-}
-
-ctx_edge_compare = {
-  'edge_line_color': Color.pastel2[1],
-  'edge_value_color': Color.set2[1],
-}
-ctx_edge_mark = {
-  'edge_line_color': Color.pastel2[2],
-  'edge_value_color': Color.set2[2],
-}
-ctx_edge_update = {
-  'edge_line_color': Color.pastel2[3],
-  'edge_value_color': Color.set2[3],
-}
-edge_contexts = [
-  ctx_edge_grayed, ctx_edge_normal, ctx_edge_compare, ctx_edge_mark, ctx_edge_update
-]
-
 # t = 0.0 ~ 2.0 사이로 변화하는 값임. 1 이면 가운데임
 def lerp_2d(xy1, xy2, t=1):
   # x1,y1 = xy1[0], xy1[1]
@@ -75,11 +10,23 @@ def lerp_2d(xy1, xy2, t=1):
 
 # 평면 시각화
 class PlanarVisualizer(Visualizer):
-  LEVEL_GRAYED, LEVEL_NORMAL, LEVEL_COMPARE, LEVEL_MARK, LEVEL_UPDATE, LEVELS_COUNT = range(6)
+  def_city_context = {
+    'city_body_color': Color.LightBlue,
+    'city_line_color': Color.DeepSkyBlue,
+    'city_name_color': Color.DarkBlue,
+    # 'shows_city_index': True,
+    # 'shows_city_coord': True,
+  }
+  def_edge_context = {
+    'edge_line_color': Color.Teal,
+    'edge_value_color': Color.DarkGreen,
+  }
+
   def setup(self, data):
     self.data = data
     self.compute_min_max()
-    self.city_levels = dict()
+    self.city_contexts = dict()
+    self.edge_contexts = dict()
     # self.draw()
 
   def compute_min_max(self):
@@ -90,15 +37,29 @@ class PlanarVisualizer(Visualizer):
       if min_y > c.y: min_y = c.y
       if max_x < c.x: max_x = c.x
       if max_y < c.y: max_y = c.y
-    # print('min:', (min_x, min_y), 'max:', (max_x, max_y))
     self.min_x, self.max_x = min_x, max_x
     self.min_y, self.max_y = min_y, max_y
 
     self.diff_x = max_x - min_x
     self.diff_y = max_y - min_y
 
-  def set_city_level(self, index, level):
-    self.city_levels[index] = level
+  def get_city_context(self, index):
+    if index in self.city_contexts:
+      return self.city_contexts[index]
+    return None
+
+  def set_city_context(self, index, context):
+    self.city_contexts[index] = context
+
+  def get_edge_context(self, u,v):
+    if u > v: u,v = v,u
+    if (u,v) in self.edge_contexts:
+      return self.edge_contexts[(u,v)]
+    return None
+
+  def set_edge_context(self, u,v, context):
+    if u > v: u,v = v,u
+    self.edge_contexts[(u,v)] = context
 
   def draw(self):
     self.clear()
@@ -108,7 +69,7 @@ class PlanarVisualizer(Visualizer):
 
   def draw_content(self):
     if hasattr(self.data, 'edges'):
-      self.draw_all_edges(shows_edge_value=True, **ctx_edge_normal)
+      self.draw_all_edges()
     self.draw_all_cities()
 
   def calc_coords(self):
@@ -129,7 +90,6 @@ class PlanarVisualizer(Visualizer):
     dx, dy = x - self.min_x, y - self.min_y
     x = self.separator_size + dx * self.scale
     y = self.separator_size + dy * self.scale
-    # print(f'{self.diff=} {self.scale=} {(dx,dy)=}  {(x,y)=}')
     return [x, y]
 
   def xy2s(self, xy):
@@ -139,24 +99,37 @@ class PlanarVisualizer(Visualizer):
     return self.xy2s([city.x, city.y])
 
   def draw_all_cities(self, **args):
+    uses_ctx = len(args) == 0
     for i in range(len(self.data.cities)):
-      level = self.city_levels[i] if i in self.city_levels else 1
-      self.draw_city(i, **city_contexts[level], **args)
+      if uses_ctx:
+        ctx = self.get_city_context(i)
+        if not ctx: ctx = self.def_city_context
+      else:
+        ctx = args
+      self.draw_city(i, **ctx)
 
   def draw_all_edges(self, **args):
-    for edge in self.data.edges:
-      self.draw_edge(*edge, **args)
-      # self.draw_directed_edge(*edge, **args)
-      # self.draw_directed_edge(u,v,w, **args)
-      # self.draw_directed_edge(v,u,w, **args)
+    uses_ctx = len(args) == 0
+    for u,v,w in self.data.edges:
+      if uses_ctx:
+        ctx = self.get_edge_context(u, v)
+        if not ctx: ctx = self.def_edge_context
+      else:
+        ctx = args
+      self.draw_edge(u,v,w, **ctx)
 
   def draw_city(self, city, **args):
     if isinstance(city, int):
       city = self.data.cities[city]
     xy = self.xy2s([city.x, city.y])
-    body_color = attr(args, 'city_body_color', clr.city_body)
-    line_color = attr(args, 'city_line_color', clr.city_line)
-    name_color = attr(args, 'city_name_color', clr.city_name)
+    body_color = attr(args, 'city_body_color', Color.back)
+    line_color = attr(args, 'city_line_color', Color.line)
+    name_color = attr(args, 'city_name_color', Color.text)
+
+    # def_city_context = {
+    #   'city_body_color': Color.DeepSkyBlue,
+    #   'city_line_color': Color.LightBlue,
+    #   'city_name_color': Color.DarkBlue,
 
     radius = self.city_radius
     pg.draw.circle(self.screen, body_color, xy, radius)
@@ -165,21 +138,19 @@ class PlanarVisualizer(Visualizer):
     xy[1] -= self.config.font_size // 2 + radius
     name = city.getName(**args)
 
-    # print(city, name)
     self.draw_text(name, xy, text_color=name_color, **args)
 
   def draw_edge(self, c1, c2, value=None, **args):
     if isinstance(c1, int): c1 = self.data.cities[c1]
     if isinstance(c2, int): c2 = self.data.cities[c2]
     xy1, xy2 = self.city2s(c1), self.city2s(c2)
-    line_color = attr(args, 'edge_line_color', clr.line)
+    line_color = attr(args, 'edge_line_color', Color.line)
     pg.draw.aaline(self.screen, line_color, xy1, xy2)
     if value != None:
       shows_value = attr(args, 'shows_edge_value', False)
       if shows_value:
         xy = lerp_2d(xy1, xy2)
-        value_color = attr(args, 'edge_value_color', clr.edge_value)
-        # print(f'{value_color=} {clr.edge_value=} {args=}')
+        value_color = attr(args, 'edge_value_color', Color.text)
         self.draw_text(f'{value}', xy, text_color=value_color)
 
   def draw_directed_edge(self, c1, c2, value=None, **args):
@@ -195,18 +166,16 @@ class PlanarVisualizer(Visualizer):
     self.draw_arrow(sxy, dxy, angle, value, **args)
 
   def draw_arrow(self, sxy, dxy, angle=None, value=None, **args):
-    line_color = attr(args, 'edge_line_color', clr.line)
+    line_color = attr(args, 'edge_line_color', Color.line)
     axy = self.get_arrow_pos(sxy, dxy, angle)
     pg.draw.aaline(self.screen, line_color, sxy, dxy)
     pg.draw.aaline(self.screen, line_color, dxy, axy)
-
-    print(f"{value=} {attr(args, 'shows_edge_value', False)=}")
 
     if value != None:
       shows_value = attr(args, 'shows_edge_value', False)
       if shows_value:
         xy = lerp_2d(sxy, dxy, 1.1) # at 55% position (1=50%, 2=100%)
-        value_color = attr(args, 'edge_value_color', clr.edge_value)
+        value_color = attr(args, 'edge_value_color', Color.line)
         self.draw_text(f'{value}', xy, text_color=value_color)
 
   def shorter_line(self, x1,y1,x2,y2,angle=None):

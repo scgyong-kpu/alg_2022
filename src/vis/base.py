@@ -1,17 +1,10 @@
 import pygame as pg
 import json
+from vis.color import *
 
 CONFIG_FILE = '_config.json'
 INITIAL_SCREEN_SIZE = [ 960, 540 ]
 INITIAL_FONT_SIZE = 12
-
-def color_argb(value): 
-  value = value.lstrip('#')
-  lv = len(value)
-  return [ int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3) ]
-
-def color_argb_array(array): 
-  return [ color_argb(value) for value in array ]
 
 def rect_center(rect):
   x,y,w,h = rect
@@ -23,20 +16,6 @@ def rect_inflate(rect, amount):
 
 def attr(dict, key, def_value):
   return dict[key] if key in dict else def_value
-
-class Color:
-  # from D3.js colors
-  pair = color_argb_array(["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a","#ffff99","#b15928"])
-  pastel1 = color_argb_array(["#fbb4ae","#b3cde3","#ccebc5","#decbe4","#fed9a6","#ffffcc","#e5d8bd","#fddaec","#f2f2f2"])
-  pastel2 = color_argb_array(["#b3e2cd","#fdcdac","#cbd5e8","#f4cae4","#e6f5c9","#fff2ae","#f1e2cc","#cccccc"])
-  set1 = color_argb_array(["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#ffff33","#a65628","#f781bf","#999999"])
-  set2 = color_argb_array(["#66c2a5","#fc8d62","#8da0cb","#e78ac3","#a6d854","#ffd92f","#e5c494","#b3b3b3"])
-  set3 = color_argb_array(["#8dd3c7","#ffffb3","#bebada","#fb8072","#80b1d3","#fdb462","#b3de69","#fccde5","#d9d9d9","#bc80bd","#ccebc5","#ffed6f"])
-  dark = color_argb_array(["#1b9e77","#d95f02","#7570b3","#e7298a","#66a61e","#e6ab02","#a6761d","#666666"])
-  gray = color_argb_array(['#f0f0f0', '#dbdbdb', '#c1c1c1', '#9f9f9f', '#7d7d7d', '#5d5d5d', '#383838', '#121212'])
-  back = color_argb('#ffffff')
-  text = color_argb('#00001f')
-  line = dark[0]
 
 WAIT_ONE_FRAME_MILLIS = 15
 
