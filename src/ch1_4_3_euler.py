@@ -1,5 +1,7 @@
 
 def start():
+  euler_circuit = [] # 빈 배열로 초기화한다
+
   cv = start_vertex # cv: current vertex
 
   if True: # 나중에 if 를 while 로 변경할 예정이다. 임시로 한 번만 돌기 위해 if 를 썼다
@@ -32,15 +34,29 @@ def start():
         adj_list[cv].append(cand)
         adj_list[cand].append(cv)
 
-        print(f'{cand=} {is_connected=} {pts=}')
+        print(f'{cv}~{cand} 간선을 삭제했을 때: {cand=} {is_connected=} {pts=}')
         # 원래는 연결되니 그만 해야 하지만 모든 점들을 확인해 보기로 한다
 
         # 연결된다면 이번 점으로 진행하기로 한다.
-        # if is_connected:
-        #   nv = cand      # nv = next vertex
-        #   break
+        if is_connected:
+          nv = cand      # nv = next vertex
+          break
 
         # 아니라면 다음 후보로 넘어간다
+
+    # nv 쪽으로 가는 것이 확정되었으므로 cv~nv 사이의 간선은 제거한다.
+    adj_list[cv].remove(nv)
+    adj_list[nv].remove(cv)
+
+    # nv 를 오일러 서킷에 추가한다
+    euler_circuit.append(nv)
+    print(f'{nv} 이(가) 추가되었다. {euler_circuit=}')
+
+''' 출력결과:
+
+0~1 간선을 삭제했을 때: cand=1 is_connected=True pts={0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
+1 이(가) 추가되었다. euler_circuit=[1]
+'''
 
 def connected_points(v, pts=set()):
   # 연결 가능한 점을 모두 알기 위해 DFS (Depth First Search) 를 이용한다
