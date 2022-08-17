@@ -37,9 +37,8 @@ def start():
         # cv 에서 cand 까지 연결 되는지 확인한다
         # cv 로부터 연결 가능한 모든 점을 받아서 그 안에 있는지 확인한다
         vis.dfs_push()
-        pts = connected_points(cv)
+        is_connected = is_point_connnected_to(cv, cand)
         vis.dfs_pop()
-        is_connected = cand in pts
 
         vis.revive_edge(cv, cand)
         # 연결되는지만 확인하려고 간선을 제거한 것이므로
@@ -47,7 +46,7 @@ def start():
         adj_list[cv].append(cand)
         adj_list[cand].append(cv)
 
-        print(f'{cv}~{cand} 간선을 삭제했을 때: {cand=} {is_connected=} {pts=}')
+        print(f'{cv}~{cand} 간선을 삭제했을 때: {cand=} {is_connected=}')
         # 원래는 연결되니 그만 해야 하지만 모든 점들을 확인해 보기로 한다
 
         # 연결된다면 이번 점으로 진행하기로 한다.
@@ -72,8 +71,8 @@ def start():
 
   vis.finish_euler(euler_circuit)
 
-def connected_points(v, pts=None):
-  # 연결 가능한 점을 모두 알기 위해 DFS (Depth First Search) 를 이용한다
+def is_point_connnected_to(v, to, pts=None):
+  # 특정 점에 연결 가능한지만 확인하면 되므로 모든 점을 알 필요는 없다
   # 이미 방문한 점은 pts 라는 집합에 넣도록 하며
   # 첫 호출시에는 빈 set 이 되도록 default argument 로 넣어 둔다 ( pts=None )
   if pts == None: pts = set()
@@ -82,10 +81,17 @@ def connected_points(v, pts=None):
   vis.dfs_push(v)
   for w in adj_list[v]: # v 에 연결되는 모든 점들에 대해
     if not w in pts:    # 아직 방문한적이 없었으면
-      connected_points(w, pts) # 재귀 호출한다
-  vis.dfs_pop()
+      if w == to:
+        vis.dfs_push(w)
+        vis.dfs_pop()
+        return True # 이번에 연결하는 점이 목표점이면 바로 리턴
+      connected = is_point_connnected_to(w, to, pts) # 재귀 호출한다
+      if connected: 
+        vis.dfs_pop()
+        return True
 
-  return pts # 그렇게 재귀호출이 끝난 결과를 set 형태로 리턴한다
+  vis.dfs_pop()
+  return False # 내 이후로 연결되는 것이 없다
 
 def list_all_edges():
   vertex_count = len(adj_list)
