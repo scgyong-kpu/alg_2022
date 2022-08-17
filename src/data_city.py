@@ -1036,3 +1036,4 @@ if __name__ == '__main__':
   #   vis.set_city_level(i, i % vis.LEVELS_COUNT)
   vis.draw()
   vis.end()
+
