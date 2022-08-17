@@ -46,12 +46,15 @@ def start():
         # 아니라면 다음 후보로 넘어간다
 
     # nv 쪽으로 가는 것이 확정되었으므로 cv~nv 사이의 간선은 제거한다.
+    print(f'{cv=} {nv=} {adj_list[cv]=}')
     adj_list[cv].remove(nv)
     adj_list[nv].remove(cv)
 
     # nv 를 오일러 서킷에 추가한다
     euler_circuit.append(nv)
     print(f'{nv} 이(가) 추가되었다. {euler_circuit=}')
+
+    cv = nv # 이제 nv 가 cv 가 되어 다음 루프를 계속한다
 
 ''' 출력결과:
 
