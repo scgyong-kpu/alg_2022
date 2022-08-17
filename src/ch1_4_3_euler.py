@@ -1,6 +1,6 @@
 
 def start():
-  euler_circuit = [] # 빈 배열로 초기화한다
+  euler_circuit = [start_vertex] # 첫 점을 넣은 배열로 초기화한다
 
   cv = start_vertex # cv: current vertex
 
