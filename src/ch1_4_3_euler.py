@@ -19,6 +19,6 @@ if __name__ == '__main__':
     # 인접점 표기 방식으로 그래프를 표현한다
     # adj_list[a] 가 list 이고 그 안에 b 가 있으면 a-b 간선이 있는 것으로 본다
 
-    list_all_edges()
+    # list_all_edges()
     start_vertex = 0
     start()
