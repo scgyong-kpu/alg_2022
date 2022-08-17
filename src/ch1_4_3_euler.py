@@ -4,7 +4,7 @@ def start():
 
   cv = start_vertex # cv: current vertex
 
-  for _ in range(2): # while 로 변경할 예정이다. 임시로 두 번만 돌기로 한다
+  for _ in range(3): # while 로 변경할 예정이다. 임시로 세 번만 돌기로 한다
     adjs = len(adj_list[cv]) 
     # 현재 점에서 연결된 점이 몇 개인가?
     # 한개뿐이라면 그리로 가면 되고 여러개라면 선택해야 한다
@@ -59,9 +59,14 @@ def start():
 ''' 출력결과:
 
 0~1 간선을 삭제했을 때: cand=1 is_connected=True pts={0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
+cv=0 nv=1 adj_list[cv]=[9, 1]
 1 이(가) 추가되었다. euler_circuit=[1]
-9 는 유일한 길이다. 이쪽으로 갈 수밖에 없다
-9 이(가) 추가되었다. euler_circuit=[1, 9]
+2 는 유일한 길이다. 이쪽으로 갈 수밖에 없다
+cv=1 nv=2 adj_list[cv]=[2]
+2 이(가) 추가되었다. euler_circuit=[1, 2]
+2~3 간선을 삭제했을 때: cand=3 is_connected=True pts={0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
+cv=2 nv=3 adj_list[cv]=[10, 11, 3]
+3 이(가) 추가되었다. euler_circuit=[1, 2, 3]
 
 '''
 
