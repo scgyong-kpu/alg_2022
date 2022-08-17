@@ -1,5 +1,5 @@
-# from vis import EulerVisualizer as Visualizer
-from vis import Dummy as Visualizer
+from vis import EulerVisualizer as Visualizer
+# from vis import Dummy as Visualizer
 from data_city import City
 
 def start():
