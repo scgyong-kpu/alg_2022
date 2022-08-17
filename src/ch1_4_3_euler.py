@@ -39,10 +39,17 @@ def start():
 
         # 아니라면 다음 후보로 넘어간다
 
+def connected_points(v, pts=set()):
+  # 연결 가능한 점을 모두 알기 위해 DFS (Depth First Search) 를 이용한다
+  # 이미 방문한 점은 pts 라는 집합에 넣도록 하며
+  # 첫 호출시에는 빈 set 이 되도록 default argument 로 넣어 둔다 ( pts=set() )
 
-def connected_points(v):
-  # 아직 구현 전이므로 임시로 False 를 리턴하는 함수만 만들어 둔다
-  return False
+  pts.add(v) # 이번 점을 넣고
+  for w in adj_list[v]: # v 에 연결되는 모든 점들에 대해
+    if not w in pts:    # 아직 방문한적이 없었으면
+      connected_points(w, pts) # 재귀 호출한다
+
+  return pts # 그렇게 재귀호출이 끝난 결과를 set 형태로 리턴한다
 
 def list_all_edges():
   vertex_count = len(adj_list)
