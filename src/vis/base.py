@@ -161,6 +161,15 @@ class Visualizer:
   def update_display(self):
     pg.display.flip()
 
+  def animate(self, duration):
+    duration //= self.speed
+    frames = duration // WAIT_ONE_FRAME_MILLIS
+    if frames < 2: frames = 2
+    for i in range(1, frames+1):
+      self.anim_progress = i / frames
+      self.draw()
+      self.wait(WAIT_ONE_FRAME_MILLIS)
+
   def clip(self, rect):
     self.screen.set_clip(rect)
 
@@ -175,6 +184,17 @@ class Visualizer:
       pg.draw.rect(self.screen, line_color, box, width, border_radius=border_radius)
     if text != None:
       self.draw_text(text, pg.Rect(box).center, **args, center=True)
+
+  def draw_circle(self, xy, radius, text=None, **args):
+    if not attr(args, 'no_body', False):
+      body_color = attr(args, 'body_color', Color.back)
+      pg.draw.circle(self.screen, body_color, xy, radius)
+    if not attr(args, 'no_line', False):
+      line_color = attr(args, 'line_color', Color.line)
+      width = attr(args, 'width', 1)
+      pg.draw.circle(self.screen, line_color, xy, radius, width)
+    if text != None:
+      self.draw_text(text, xy, **args, center=True)
 
   def draw_text(self, text, xy, center=True, **args):
     font = attr(args, 'font', self.small_font)

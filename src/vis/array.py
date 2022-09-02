@@ -10,8 +10,13 @@ class ArrayVisualizer(Visualizer):
     self.data = data
     self.draw()
 
-  def draw_content(self):
+  def draw(self):
+    self.clear()
     self.calc_coords()
+    self.draw_content()
+    self.update_display()
+
+  def draw_content(self):
     self.draw_table()
 
   def calc_coords(self):
@@ -198,3 +203,4 @@ class BinarySearchVisualizer(SearchVisualizer):
     else:
       color = Color.back
     self.draw_box(rect, text=str(self.data.array[index]), body_color=color)
+
