@@ -106,6 +106,11 @@ def print_board():
 
 # uses_warnsdorff = True
 uses_warnsdorff = False
+# warnsdorff 를 사용하지 않으면
+# 5x5 는 walks = 252 까지
+# 6x6 은 walks = 48616 까지
+# 8x8 은 walks = 29178254 까지
+# 진행해야 끝나므로 5x5 를 제외하면 Dummy Visualizer 를 사용할 것을 권장한다
 
 if __name__ == '__main__':
   vis = Visualizer('Find Max Value')
