@@ -274,10 +274,15 @@ class InsertionSortVisualizer(SortVisualizer):
         self.draw_box(rect, str(self.anim_value), **self.bctx_shift)
 
   def get_rect(self, index):
-    return ArrayVisualizer.get_rect(self, index)
+    if self.shows_pick:
+      return ArrayVisualizer.get_rect(self, index)
+    else:
+      return SortVisualizer.get_rect(self, index)
 
   def get_compare_values(self):
-     return self.data.array[self.compare_i1], self.pick_value
+    if self.pick_value is None:
+      return self.data.array[self.compare_i1], self.data.array[self.compare_i2]
+    return self.data.array[self.compare_i1], self.pick_value
 
   def set_compare_context(self, i1, i2, on):
     # print(f'{i1=} {i2=} {on=}')
