@@ -8,20 +8,24 @@ from vis import BubbleSortVisualizer as Visualizer
 def main():
   print('before:', array)
   count = len(array)
-  for end in range(count - 1, 0, -1):
+  end = count - 1
+  while end > 0:
+    last = 1
     for i in range(end):
       vis.compare(i, i+1)
       if array[i] > array[i+1]:
         vis.swap(i, i+1)
         array[i], array[i+1] = array[i+1], array[i]
-    vis.bubble_end(end)
+        last = i + 1
+    end = last - 1
+    vis.bubble_end(last)
   vis.bubble_end(0)
   print('after :', array)
 
 ''' Bubble 을 2중루프로 돌아 보면, 다음과 같이 출력된다.
 before: [71, 30, 18, 51, 77, 37, 3, 93, 90, 48]
 after : [3, 18, 30, 37, 48, 51, 71, 77, 90, 93]
-comparison: 45
+comparison: 39
 swap: 19
 '''
 
