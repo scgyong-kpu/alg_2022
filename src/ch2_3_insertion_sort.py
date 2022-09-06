@@ -1,7 +1,7 @@
-# from data_unsorted import numbers
-from data_unsorted_a_lot import numbers
+from data_unsorted import numbers
+# from data_unsorted_a_lot import numbers
 from random import randint, seed, shuffle
-# from vis import InsertionSortVisualizer as Visualizer
+from vis import InsertionSortVisualizer as Visualizer
 # from vis import Dummy as Visualizer
 from time import time
 
@@ -36,29 +36,29 @@ def main_level_2():
   print('after :', array)
 
 def main():
-  # print('before:', array)
+  print('before:', array)
   count = len(array)
 
   for i in range(1, count):
-    # vis.mark_end(i, True)
+    vis.mark_end(i, True)
     v = array[i]
     j = i
     while j > 0:
-      # vis.compare(j-1, j)
+      vis.compare(j-1, j)
       if array[j-1] > v:
-        # vis.shift(j-1, j)
+        vis.shift(j-1, j)
         array[j] = array[j-1]
-        # vis.draw()
+        vis.draw()
         j -= 1
       else:
         break
-    # vis.shift(i, j, True)
+    vis.shift(i, j, True)
     array[j] = v
-    # vis.draw()
+    vis.draw()
 
-  # vis.draw()
+  vis.draw()
 
-  # print('after :', array)
+  print('after :', array)
 
 ''' 성능측정
 count=100 elapsed=0.000
@@ -82,18 +82,18 @@ count=50000 elapsed=106.722
 if __name__ == '__main__':
   seed('Hello') # 'Hello' 를 seed 로 고정하여 randint 가 항상 같은 결과가 나오게 한다
 
-  counts = [ 
-    100, 1000, 2000, 3000, 4000, 5000, 
-    6000, 7000, 8000, 9000, 10000, 15000, 
-    20000, 30000, 40000, 50000 ]
-  for count in counts:
-    array = numbers[:count]
-    shuffle(array)
-    startedOn = time()
-    main()
-    elapsed = time() - startedOn
-    print(f'{count=} {elapsed=:.3f}')
-  exit() 
+  # counts = [ 
+  #   100, 1000, 2000, 3000, 4000, 5000, 
+  #   6000, 7000, 8000, 9000, 10000, 15000, 
+  #   20000, 30000, 40000, 50000 ]
+  # for count in counts:
+  #   array = numbers[:count]
+  #   shuffle(array)
+  #   startedOn = time()
+  #   main()
+  #   elapsed = time() - startedOn
+  #   print(f'{count=} {elapsed=:.3f}')
+  # exit() 
 
   vis = Visualizer('Selection Sort')
 
