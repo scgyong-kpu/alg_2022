@@ -47,9 +47,10 @@ def main():
   print(f'{count=} first_gap={gap}')
   while True:
     vis.set_gap(gap)
-    for offset in range(gap):
-      start = offset + gap
-      while start < count:
+    # for offset in range(gap):
+    #   start = offset + gap
+    #   while start < count:
+    for start in range(gap, count):
         vis.mark_end(start, True)
         v = array[start]
         i = start
