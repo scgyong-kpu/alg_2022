@@ -60,6 +60,25 @@ def main():
 
   # print('after :', array)
 
+''' 성능측정
+count=100 elapsed=0.000
+count=1000 elapsed=0.045
+count=2000 elapsed=0.187
+count=3000 elapsed=0.401
+count=4000 elapsed=0.677
+count=5000 elapsed=1.085
+count=6000 elapsed=1.500
+count=7000 elapsed=2.062
+count=8000 elapsed=2.654
+count=9000 elapsed=3.417
+count=10000 elapsed=4.111
+count=15000 elapsed=9.419
+count=20000 elapsed=17.275
+count=30000 elapsed=38.262
+count=40000 elapsed=68.145
+count=50000 elapsed=106.722
+'''
+
 if __name__ == '__main__':
   seed('Hello') # 'Hello' 를 seed 로 고정하여 randint 가 항상 같은 결과가 나오게 한다
 
