@@ -1,8 +1,8 @@
 from data_unsorted import numbers
 # from data_unsorted_a_lot import numbers
 from random import randint, seed
-# from vis import BubbleSortVisualizer as Visualizer
-from vis import Dummy as Visualizer
+from vis import BubbleSortVisualizer as Visualizer
+# from vis import Dummy as Visualizer
 
 
 def main():
@@ -11,7 +11,9 @@ def main():
   end = count - 1
   if True:
     for i in range(end):
+      vis.compare(i, i+1)
       if array[i] > array[i+1]:
+        vis.swap(i, i+1)
         array[i], array[i+1] = array[i+1], array[i]
   print('after :', array)
 
