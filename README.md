@@ -14,3 +14,4 @@ Algorithm Class 2022, TUKorea
 
 ## a04
 1. 9/1 (Thu) Chapter 1
+1. 9/5 (Mon) Chapter 2
