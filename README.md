@@ -10,7 +10,7 @@ Algorithm Class 2022, TUKorea
 | 1 |  **9/1 (Thu)** | **9/1 (Thu)** |  **9/5 (Mon)** |  **9/1 (월)** | 1. Chapter 1 : 알고리즘의 첫걸음 |
 | 2 |  **9/7 (Wed)** |  **9/5 (Mon)** |  **9/7 (Wed)** |  **9/5 (Mon)** | 2. Chapter 2 : 알고리즘을 배우기 위한 준비   |
 | 3 |  **9/8 (Thu)** |  **9/8 (Thu)** |  9/14 (Wed) |   **9/8 (Thu)** | 3. Python Basic 1 : Keywords, Collections |
-| 4 |  9/14 (Wed) |   9/19 (Mon) |   9/19 (Mon) |   9/19 (Mon) | 4. Python Basic 2 : Module, Libraries  |
+| 4 |  **9/14 (Wed)** |   9/19 (Mon) |   9/19 (Mon) |   9/19 (Mon) | 4. Python Basic 2 : Module, Libraries  |
 | 5 |  9/15 (Thu) |   9/22 (Thu) |   9/21 (Wed) |   9/22 (Thu) | 5. Ch 6 Sort #1 : Bubble, Selection, Insert, Shell |
 | 6 |  9/21 (Wed) |   9/23 (Fri) |   9/23 (Fri) |   9/26 (Mon) | 6. Ch 6 Sort #2 : 실습  |
 | 7 |  9/22 (Thu) |   9/26 (Mon) |   9/26 (Mon) |   9/29 (Thu) | 7. Ch 6 Sort #3 : Heap, Radix, External |
