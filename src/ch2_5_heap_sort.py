@@ -5,11 +5,13 @@ from vis import HeapSortVisualizer as Visualizer
 # from vis import Dummy as Visualizer
 from time import time
 
+
 def main():
   print('before:', array)
   count = len(array)
+  vis.build_tree()
+
   print('after :', array)
-  vis.draw()
 
 
 if __name__ == '__main__':
