@@ -693,6 +693,10 @@ class CountSortVisualizer(ArrayVisualizer):
     return [x, y, iw, iw]
 
 class RadixSortLsdVisualizer(CountSortVisualizer):
+  def setup(self, data):
+    super().setup(data)
+    self.moves_result_to_array = False
+
   def set_inc_index(self, div, index, increasing=True):
     super().set_inc_index(index, increasing)
     self.radix_div = div
@@ -705,3 +709,17 @@ class RadixSortLsdVisualizer(CountSortVisualizer):
     if not hasattr(self, 'radix_div'): return False
     value = self.data.array[self.inc_index] // self.radix_div % 10
     return index == self.data.counts[value]
+
+  def result_to_array(self):
+    self.moves_result_to_array = True
+    self.animate(1000)
+    self.moves_result_to_array = False
+
+  def get_item_rect(self, isUpper, index, apply_swap=True):
+    rect = super().get_item_rect(isUpper, index, apply_swap)
+    if isUpper or not self.moves_result_to_array: return rect
+
+    _,y,_,_ = super().get_item_rect(True, index, False)
+    rect[1] -= (rect[1] - y) * self.anim_progress
+    return rect
+
