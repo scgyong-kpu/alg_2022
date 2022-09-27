@@ -68,6 +68,10 @@ count=200000 elapsed=1.543
 count=300000 elapsed=2.452
 count=400000 elapsed=3.579
 count=500000 elapsed=4.491
+
+nlogn vs n^1.5
+y = 3xlog(2,x),  y=x^1.5 , x from 1 to 1000
+https://www.wolframalpha.com/input?i=y+%3D+3xlog%282%2Cx%29%2C++y%3Dx%5E1.5+%2C+x+from+1+to+1000
 '''
 
 if __name__ == '__main__':
