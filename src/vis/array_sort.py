@@ -617,7 +617,7 @@ class CountSortVisualizer(ArrayVisualizer):
         self.count_y, self.count_w, self.count_w
       ]
       value = self.data.array[self.inc_index]
-      if i == value:
+      if self.inc_index >= 0 and i == value:
         ctx = self.bctx_count_inc
       else:
         ctx = self.bctx_count
