@@ -39,19 +39,55 @@ def main():
   # vis.set_inc_index(-1, False)
   # print('after :', array)
 
+''' 성능측정
+count=100    kind=291 elapsed=0.000
+count=1000   kind=261 elapsed=0.001
+count=2000   kind=270 elapsed=0.001
+count=3000   kind=296 elapsed=0.001
+count=4000   kind=182 elapsed=0.001
+count=5000   kind=44  elapsed=0.001
+count=6000   kind=33  elapsed=0.001
+count=7000   kind=172 elapsed=0.002
+count=8000   kind=57  elapsed=0.002
+count=9000   kind=58  elapsed=0.002
+count=10000  kind=45  elapsed=0.003
+count=15000  kind=289 elapsed=0.004
+count=20000  kind=293 elapsed=0.005
+count=30000  kind=173 elapsed=0.008
+count=40000  kind=153 elapsed=0.010
+count=50000  kind=53  elapsed=0.014
+count=100000 kind=13  elapsed=0.023
+count=200000 kind=128 elapsed=0.050
+count=300000 kind=293 elapsed=0.070
+count=400000 kind=208 elapsed=0.100
+count=500000 kind=14  elapsed=0.134
+
+
+Creating List: count=1000000 elapsed=0.818
+count=1000000 kind=291 elapsed=0.311
+Creating List: count=10000000 elapsed=6.516
+count=10000000 kind=212 elapsed=2.812
+Creating List: count=100000000 elapsed=70.410
+count=100000000 kind=142 elapsed=29.261
+'''
+
 if __name__ == '__main__':
   seed('HelloCountSort')
 
   counts = [ 
-    100, 1000, 2000, 3000, 4000, 5000, 
-    6000, 7000, 8000, 9000, 10000, 15000, 
-    20000, 30000, 40000, 50000,
-    100000, 200000, 300000, 400000, 500000,
+    # 100, 1000, 2000, 3000, 4000, 5000, 
+    # 6000, 7000, 8000, 9000, 10000, 15000, 
+    # 20000, 30000, 40000, 50000,
+    # 100000, 200000, 300000, 400000, 500000,
+    1000000, 10000000, 100000000,
   ]
   for count in counts:
     kind = randint(10, 300)
     # print(f'Creating data: {kind=} {count=}')
-    array = list(map(lambda x: x%kind, numbers[1000:1000+count]))
+    startedOn = time()
+    array = list(map(lambda x: randint(1, kind), range(count)))
+    elapsed = time() - startedOn
+    print(f'Creating List: {count=:<6d} {elapsed=:.3f}')
     shuffle(array)
     # print('before:', array)
     startedOn = time()
