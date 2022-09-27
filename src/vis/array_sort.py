@@ -609,6 +609,9 @@ class CountSortVisualizer(ArrayVisualizer):
     if hasattr(self.data, 'result'):
       self.draw_pane(False, self.data.result)
 
+  def animates_count(self, index):
+    return self.inc_index >= 0 and index == self.data.array[self.inc_index]
+
   def draw_counts(self):
     for i in range(len(self.data.counts)):
       count = self.data.counts[i]
@@ -617,13 +620,14 @@ class CountSortVisualizer(ArrayVisualizer):
         self.count_y, self.count_w, self.count_w
       ]
       value = self.data.array[self.inc_index]
-      if self.inc_index >= 0 and i == value:
+      animates = self.animates_count(i)
+      if animates:
         ctx = self.bctx_count_inc
       else:
         ctx = self.bctx_count
 
       x,y = rect_center(rect)
-      if self.anim_type > 0 and i == value:
+      if self.anim_type > 0 and animates:
         sign = -1 if self.anim_type == 1 else 1
         # print(f'{self.anim_type=} {sign=} {i=}')
         self.draw_box(rect, **ctx)
@@ -686,3 +690,11 @@ class CountSortVisualizer(ArrayVisualizer):
     # print(f'{isUpper=} {index=} {px=},{py=} {x=},{y=}')
     return [x, y, iw, iw]
 
+class RadixSortLsdVisualizer(CountSortVisualizer):
+  def set_inc_index(self, div, index, increasing=True):
+    super().set_inc_index(index, increasing)
+    self.radix_div = div
+
+  def animates_count(self, index):
+    if not hasattr(self, 'radix_div'): return False
+    return self.inc_index >= 0 and index == (self.data.array[self.inc_index] // self.radix_div % 10)
