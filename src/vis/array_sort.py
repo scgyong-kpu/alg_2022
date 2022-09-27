@@ -673,13 +673,15 @@ class CountSortVisualizer(ArrayVisualizer):
       ctx = self.bctx_index
       # print(f'{isUpper=} {self.increasing=} {self.inc_index=}')
       if not isUpper and not self.increasing and self.inc_index >= 0:
-        value = self.data.array[self.inc_index]
-        at = self.data.counts[value]
-        if index == at:
+        if self.is_current_count(index):
           ctx = self.bctx_count_inc
 
     rect = self.get_item_rect(isUpper, index, swap)
     self.draw_box(rect, text, **ctx)
+
+  def is_current_count(self, index):
+    value = self.data.array[self.inc_index]
+    return index == self.data.counts[value]
 
   def get_item_rect(self, isUpper, index, apply_swap=True):
     px, py = self.get_pane_pos(isUpper)
@@ -698,3 +700,8 @@ class RadixSortLsdVisualizer(CountSortVisualizer):
   def animates_count(self, index):
     if not hasattr(self, 'radix_div'): return False
     return self.inc_index >= 0 and index == (self.data.array[self.inc_index] // self.radix_div % 10)
+
+  def is_current_count(self, index):
+    if not hasattr(self, 'radix_div'): return False
+    value = self.data.array[self.inc_index] // self.radix_div % 10
+    return index == self.data.counts[value]
