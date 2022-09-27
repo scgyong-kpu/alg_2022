@@ -12,7 +12,7 @@ def main():
   print('after :', array)
 
 if __name__ == '__main__':
-  # seed('HelloCountSort')
+  seed('HelloCountSort')
   vis = Visualizer('Count Sort')
   while True:
     kind = randint(6, 30)
