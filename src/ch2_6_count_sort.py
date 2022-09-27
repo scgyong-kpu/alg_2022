@@ -1,12 +1,12 @@
 # from data_unsorted import numbers
 from data_unsorted_a_lot import numbers
-# from vis import CountSortVisualizer as Visualizer
+from vis import CountSortVisualizer as Visualizer
 # from vis import Dummy as Visualizer
 from time import time
 from random import randint, seed, shuffle
 
 def main():
-  # print('before:', array)
+  print('before:', array)
   count = len(array)
 
   global counts
@@ -14,30 +14,33 @@ def main():
   counts = [0] * (max_value + 1)
   # print(f'init  - {counts=}') 
 
+  global result
+  result = []
+
   for i in range(count):
     v = array[i]
     counts[v] += 1
-    # vis.set_inc_index(i)
+    vis.set_inc_index(i)
 
-  # vis.set_inc_index(-1)
+  vis.set_inc_index(-1)
   for i in range(max_value):
     counts[i+1] += counts[i]
-    # vis.draw()
-    # vis.wait(1000)
+    vis.draw()
+    vis.wait(1000)
 
-  global result
+  # global result
   result = [None] * count
 
   for i in range(count-1, -1, -1):  # 거꾸로 진행
     v = array[i]                    # 값을 가져다가
     at = counts[v] - 1              # 어디에 넣어야 하는지 구한다. counts[v] 는 v 가 들어가야 할 index+1 을 담고 있다
     counts[v] -= 1                  # index 는 1 빼준다
-    # vis.set_inc_index(i, False)
+    vis.set_inc_index(i, False)
     result[at] = v                  # 구한 인덱스에 해당 값을 넣는다
     # print(f'{i=:2d} {v=:2d} {result=}')
 
-  # vis.set_inc_index(-1, False)
-  # print('after :', array)
+  vis.set_inc_index(-1, False)
+  print('after :', array)
 
 ''' 성능측정
 count=100    kind=291 elapsed=0.000
@@ -73,36 +76,13 @@ count=100000000 kind=142 elapsed=29.261
 
 if __name__ == '__main__':
   seed('HelloCountSort')
-
-  counts = [ 
-    # 100, 1000, 2000, 3000, 4000, 5000, 
-    # 6000, 7000, 8000, 9000, 10000, 15000, 
-    # 20000, 30000, 40000, 50000,
-    # 100000, 200000, 300000, 400000, 500000,
-    1000000, 10000000, 100000000,
-  ]
-  for count in counts:
-    kind = randint(10, 300)
-    # print(f'Creating data: {kind=} {count=}')
-    startedOn = time()
-    array = list(map(lambda x: randint(1, kind), range(count)))
-    elapsed = time() - startedOn
-    print(f'Creating List: {count=:<6d} {elapsed=:.3f}')
-    shuffle(array)
-    # print('before:', array)
-    startedOn = time()
-    main()
-    elapsed = time() - startedOn
-    # print('after :', result)
-    print(f'{count=:<6d} {kind=:<3d} {elapsed=:.3f}')
-  exit() 
-
   vis = Visualizer('Count Sort')
   while True:
     kind = randint(6, 30)
     count = randint(30, 150)
     print(f'Creating data: {kind=} {count=}')
     array = list(map(lambda x: x%kind, numbers[1000:1000+count]))
+    print(array, kind, count)
     vis.setup(vis.get_main_module())
     main()
     vis.draw()
