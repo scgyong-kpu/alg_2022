@@ -723,3 +723,78 @@ class RadixSortLsdVisualizer(CountSortVisualizer):
     rect[1] -= (rect[1] - y) * self.anim_progress
     return rect
 
+class MergeSortVisualizer(SortVisualizer):
+  def calc_coords(self):
+    super().calc_coords()
+    sep = self.separator_size
+    self.table_y = self.config.screen_height - sep - self.cell_w
+    self.stack_line_height = self.cell_w * 2 // 3
+
+  def setup(self, data):
+    super().setup(data)
+    self.stack = []
+    self.anim_level = -1
+    self.merged = None
+    self.merging_index = -1
+
+  def push(self, left, mid, right):
+    self.stack.append((left, mid, right))
+    self.anim_level = len(self.stack) - 1
+    self.animate(500)
+    self.anim_level = -1
+
+  def pop(self):
+    self.stack.pop()
+
+  def start_merge(self, merged, shared_array, left):
+    self.merged = merged
+    self.shared_array = shared_array
+    self.merge_left = left
+    self.merged_index = left - 1
+
+  def end_merge(self):
+    self.merged = None
+    self.merging_index = -1
+
+  def add_to_merged(self, index, isLeft):
+    self.merging_index = index
+    self.merged_index += 1
+    self.draw()
+    self.wait(500)
+
+  def draw_content(self):
+    super().draw_content()
+    self.draw_stack()
+    self.draw_merged()
+
+  def draw_stack(self):
+    stack_len = len(self.stack)
+    if stack_len < 2: return
+    for lv in range(1, stack_len):
+      left, mid, right = self.stack[lv]
+      for i in range(left, right+1):
+        rect = self.adj_rect(self.get_rect(i), lv)
+        self.draw_box(rect, text=str(self.data.array[i]))
+
+  def adj_rect(self, rect, level):
+    x,y,w,h = rect
+    h = self.stack_line_height
+    y -= (h + 2) * level
+    if level == self.anim_level:
+      y += (h + 2) * (1 - self.anim_progress)
+    return x,y,w,h
+
+  def draw_merged(self):
+    if self.merged == None: return
+    merge_level = len(self.stack)
+    top_level = merge_level - 1
+    left, mid, right = self.stack[top_level]
+    dest = left if self.shared_array else 0
+    print(f'{left=} {self.merged_index=}')
+    for i in range(left, self.merged_index+1):
+      print(i)
+      value = self.merged[dest]
+      rect = self.adj_rect(self.get_rect(i), merge_level)
+      self.draw_box(rect, text=str(value))
+      dest += 1
+
