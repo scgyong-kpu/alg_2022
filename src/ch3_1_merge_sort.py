@@ -19,7 +19,7 @@ def mergeSort(left, right): #right=inclusive
     if array[left] > array[right]:
       # vis.swap(left, right)
       array[left], array[right] = array[right], array[left]
-      return
+    return
   mid = (left + right) // 2   # 목록을 절반으로 나눈다
   # vis.push(left, mid, right)
   mergeSort(left, mid)        # 왼쪽 팀을 정렬한다
@@ -114,24 +114,24 @@ count=100 elapsed=0.000
 count=1000 elapsed=0.002
 count=2000 elapsed=0.004
 count=3000 elapsed=0.007
-count=4000 elapsed=0.009
+count=4000 elapsed=0.008
 count=5000 elapsed=0.012
-count=6000 elapsed=0.015
-count=7000 elapsed=0.017
-count=8000 elapsed=0.021
-count=9000 elapsed=0.026
-count=10000 elapsed=0.026
-count=15000 elapsed=0.042
-count=20000 elapsed=0.059
-count=30000 elapsed=0.091
-count=40000 elapsed=0.114
-count=50000 elapsed=0.145
-count=100000 elapsed=0.309
-count=200000 elapsed=0.716
-count=300000 elapsed=1.092
-count=400000 elapsed=1.501
-count=500000 elapsed=1.888
-count=1000000 elapsed=3.958
+count=6000 elapsed=0.014
+count=7000 elapsed=0.019
+count=8000 elapsed=0.019
+count=9000 elapsed=0.023
+count=10000 elapsed=0.025
+count=15000 elapsed=0.038
+count=20000 elapsed=0.058
+count=30000 elapsed=0.076
+count=40000 elapsed=0.106
+count=50000 elapsed=0.138
+count=100000 elapsed=0.299
+count=200000 elapsed=0.640
+count=300000 elapsed=1.017
+count=400000 elapsed=1.454
+count=500000 elapsed=1.779
+count=1000000 elapsed=3.760
 '''
 
 if __name__ == '__main__':
