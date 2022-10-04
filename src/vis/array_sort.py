@@ -801,11 +801,13 @@ class MergeSortVisualizer(SortVisualizer):
   def mark_end(self, index, value):
     self.mark_index = index
     self.insertion_value = value
+    self.swap_count += 1
     self.insertion_anim = 1
     self.animate(500)
 
   def shift(self, index):
     self.shift_index = index
+    self.swap_count += 1
     self.insertion_anim = 2
     self.animate(500)
     self.shift_index = -1
@@ -823,9 +825,12 @@ class MergeSortVisualizer(SortVisualizer):
     self.draw_merged()
     self.draw_insertion()
 
+  def insertion_level(self):
+    return len(self.stack) - 1
+
   def draw_insertion(self):
     if self.mark_index >= 0:
-      lv = len(self.stack) - 1
+      lv = self.insertion_level()
       x,y,w,h = self.adj_rect(self.get_rect(self.mark_index), lv)
       if self.insertion_anim == 1:
         y -= self.stack_line_height * self.anim_progress
@@ -836,7 +841,7 @@ class MergeSortVisualizer(SortVisualizer):
         y -= self.stack_line_height
       self.draw_box([x,y,w,h], str(self.insertion_value))
     if self.insertion_anim == 2:
-      lv = len(self.stack) - 1
+      lv = self.insertion_level()
       x,y,w,h = self.adj_rect(self.get_rect(self.shift_index), lv)
       v = self.data.array[self.shift_index]
       x += self.cell_w * self.anim_progress
@@ -947,11 +952,11 @@ class QuickSortVisualizer(MergeSortVisualizer):
     self.swapping_pivot = False
 
   def get_item_context(self, index):
-    if not self.stack:
-      return self.bctx_normal
-
     if index in self.fixeds:
       return self.bctx_fixed
+
+    if not self.stack:
+      return self.bctx_normal
 
     if index in [self.compare_i1, self.compare_i2]:
       return self.bctx_compare
@@ -970,6 +975,7 @@ class QuickSortVisualizer(MergeSortVisualizer):
   def draw_content(self):
     self.draw_stack()
     SortVisualizer.draw_content(self)
+    self.draw_insertion()
 
   def draw_stack(self):
     stack_len = len(self.stack)
@@ -1019,4 +1025,5 @@ class QuickSortVisualizer(MergeSortVisualizer):
 
       y += self.stack_line_height
 
-
+  def insertion_level(self):
+    return len(self.stack)
