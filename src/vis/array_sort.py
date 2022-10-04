@@ -752,6 +752,10 @@ class MergeSortVisualizer(SortVisualizer):
     self.merging_index = -1
     self.ending_merge = False
     self.adding_to_merged = False
+    self.insert_from, self.insert_to = -1, -1
+    self.mark_index, self.shift_index = -1, -1
+    self.insertion_anim = 0
+
 
   def calc_coords(self):
     super().calc_coords()
@@ -794,10 +798,49 @@ class MergeSortVisualizer(SortVisualizer):
     self.animate(500)
     self.adding_to_merged = False
 
+  def mark_end(self, index, value):
+    self.mark_index = index
+    self.insertion_value = value
+    self.insertion_anim = 1
+    self.animate(500)
+
+  def shift(self, index):
+    self.shift_index = index
+    self.insertion_anim = 2
+    self.animate(500)
+    self.shift_index = -1
+
+  def insert(self, frm, to):
+    self.insert_from, self.insert_to = frm, to
+    self.insertion_anim = 3
+    self.animate(500)
+    self.insert_from, self.insert_to = -1, -1
+    self.mark_index = -1
+
   def draw_content(self):
     super().draw_content()
     self.draw_stack()
     self.draw_merged()
+    self.draw_insertion()
+
+  def draw_insertion(self):
+    if self.mark_index >= 0:
+      lv = len(self.stack) - 1
+      x,y,w,h = self.adj_rect(self.get_rect(self.mark_index), lv)
+      if self.insertion_anim == 1:
+        y -= self.stack_line_height * self.anim_progress
+      elif self.insertion_anim == 3:
+        y -= (1-self.anim_progress) * self.stack_line_height
+        x -= (self.insert_from - self.insert_to) * self.cell_w * self.anim_progress
+      else:
+        y -= self.stack_line_height
+      self.draw_box([x,y,w,h], str(self.insertion_value))
+    if self.insertion_anim == 2:
+      lv = len(self.stack) - 1
+      x,y,w,h = self.adj_rect(self.get_rect(self.shift_index), lv)
+      v = self.data.array[self.shift_index]
+      x += self.cell_w * self.anim_progress
+      self.draw_box([x,y,w,h], str(v))
 
   def draw_stack(self):
     stack_len = len(self.stack)
@@ -859,6 +902,8 @@ class MergeSortVisualizer(SortVisualizer):
   #     f'Swap = {self.swap_count}'
   #   xy = self.separator_size, self.separator_size
   #   self.draw_text(text, xy, center=False)
+
+
 
 class QuickSortVisualizer(MergeSortVisualizer):
   def setup(self, data):
