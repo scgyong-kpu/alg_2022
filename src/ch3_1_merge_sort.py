@@ -14,6 +14,12 @@ def main():
 
 def mergeSort(left, right): #right=inclusive
   if right <= left: return    # 정렬할 선수들이 없거나 한병뿐이면 할 필요가 없다
+  if right == left + 1:
+    # vis.compare(left, right)
+    if array[left] > array[right]:
+      # vis.swap(left, right)
+      array[left], array[right] = array[right], array[left]
+      return
   mid = (left + right) // 2   # 목록을 절반으로 나눈다
   # vis.push(left, mid, right)
   mergeSort(left, mid)        # 왼쪽 팀을 정렬한다
@@ -102,12 +108,37 @@ count=300000 elapsed=1.142
 count=400000 elapsed=1.582
 count=500000 elapsed=2.148
 count=1000000 elapsed=4.129
+
+2 개 남았을 때 직접비교한 경우
+count=100 elapsed=0.000
+count=1000 elapsed=0.002
+count=2000 elapsed=0.004
+count=3000 elapsed=0.007
+count=4000 elapsed=0.009
+count=5000 elapsed=0.012
+count=6000 elapsed=0.015
+count=7000 elapsed=0.017
+count=8000 elapsed=0.021
+count=9000 elapsed=0.026
+count=10000 elapsed=0.026
+count=15000 elapsed=0.042
+count=20000 elapsed=0.059
+count=30000 elapsed=0.091
+count=40000 elapsed=0.114
+count=50000 elapsed=0.145
+count=100000 elapsed=0.309
+count=200000 elapsed=0.716
+count=300000 elapsed=1.092
+count=400000 elapsed=1.501
+count=500000 elapsed=1.888
+count=1000000 elapsed=3.958
 '''
 
 if __name__ == '__main__':
   seed('Hello')
 
   counts = [ 
+  # 10,20,30,
     100, 1000, 2000, 3000, 4000, 5000, 
     6000, 7000, 8000, 9000, 10000, 15000, 
     20000, 30000, 40000, 50000,
