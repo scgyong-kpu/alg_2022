@@ -47,10 +47,12 @@ def merge(left, right, end): # 왼쪽은 [left~right-1], 오른쪽은 [right~end
 
   # vis.end_merge()
 
-  l = left
-  for n in merged:         # 임시 저장되어 있던 결과 목록에 있는 선수들을
-    array[l] = n           # 원래의 배열에 옮겨 담는다
-    l += 1
+  array[left:end+1] = merged # 임시 저장되어 있던 결과 목록에 있는 선수들을
+                             # 원래의 배열에 옮겨 담는다
+  # l = left
+  # for n in merged:         
+  #   array[l] = n           
+  #   l += 1
     # vis.erase_merged()
 
 ''' 성능 측정
@@ -76,6 +78,30 @@ count=300000 elapsed=1.375
 count=400000 elapsed=1.995
 count=500000 elapsed=2.590
 count=1000000 elapsed=5.320
+
+array copy 를 slicing 을 이용했을 경우
+count=100 elapsed=0.000
+count=1000 elapsed=0.003
+count=2000 elapsed=0.006
+count=3000 elapsed=0.008
+count=4000 elapsed=0.012
+count=5000 elapsed=0.015
+count=6000 elapsed=0.018
+count=7000 elapsed=0.021
+count=8000 elapsed=0.023
+count=9000 elapsed=0.025
+count=10000 elapsed=0.027
+count=15000 elapsed=0.044
+count=20000 elapsed=0.060
+count=30000 elapsed=0.090
+count=40000 elapsed=0.116
+count=50000 elapsed=0.149
+count=100000 elapsed=0.325
+count=200000 elapsed=0.709
+count=300000 elapsed=1.142
+count=400000 elapsed=1.582
+count=500000 elapsed=2.148
+count=1000000 elapsed=4.129
 '''
 
 if __name__ == '__main__':
