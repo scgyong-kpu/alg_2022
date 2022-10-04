@@ -1011,7 +1011,7 @@ class QuickSortVisualizer(MergeSortVisualizer):
           rect[1] = y - self.config.font_size // 2
           rect[3] = self.stack_line_height
           self.draw_text(f'p={self.p}', rect_center(rect))
-        if self.q >= 0 and self.q < right:
+        if self.q >= 0 and self.q <= right:
           rect = ArrayVisualizer.get_rect(self, self.q)
           rect[1] = y + self.config.font_size // 2
           rect[3] = self.stack_line_height
