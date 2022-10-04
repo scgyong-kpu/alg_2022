@@ -12,13 +12,24 @@ def main():
 
   # print('after :', array)
 
+def insertionSort(left, right): #right=inclusive
+  # print(f'B:{array[left:right+1]=} {left=} {right=}')
+  for i in range(left + 1, right + 1):
+    v = array[i]
+    j = i - 1
+    while j >= left and array[j] > v:
+      array[j+1] = array[j]
+      # print(f'-:{array[left:right+1]=}')
+      j -= 1
+    # print(f'{i=} {j=} {v=}')
+    array[j+1] = v
+    # print(f'=:{array[left:right+1]=} {j=}')
+  # print(f'A:{array[left:right+1]=}')
+
 def mergeSort(left, right): #right=inclusive
   if right <= left: return    # 정렬할 선수들이 없거나 한병뿐이면 할 필요가 없다
-  if right == left + 1:
-    # vis.compare(left, right)
-    if array[left] > array[right]:
-      # vis.swap(left, right)
-      array[left], array[right] = array[right], array[left]
+  if right < left + 20:
+    insertionSort(left, right)
     return
   mid = (left + right) // 2   # 목록을 절반으로 나눈다
   # vis.push(left, mid, right)
@@ -132,6 +143,14 @@ count=300000 elapsed=1.017
 count=400000 elapsed=1.454
 count=500000 elapsed=1.779
 count=1000000 elapsed=3.760
+
+20 개 이내이면 insertion sort 를 진행했을 경우
+count=100000 elapsed=0.266
+count=200000 elapsed=0.580
+count=300000 elapsed=0.956
+count=400000 elapsed=1.318
+count=500000 elapsed=1.658
+count=1000000 elapsed=3.501
 '''
 
 if __name__ == '__main__':
@@ -139,9 +158,9 @@ if __name__ == '__main__':
 
   counts = [ 
   # 10,20,30,
-    100, 1000, 2000, 3000, 4000, 5000, 
-    6000, 7000, 8000, 9000, 10000, 15000, 
-    20000, 30000, 40000, 50000,
+    # 100, 1000, 2000, 3000, 4000, 5000, 
+    # 6000, 7000, 8000, 9000, 10000, 15000, 
+    # 20000, 30000, 40000, 50000,
     100000, 200000, 300000, 400000, 500000,
     1000000, 
   ]
