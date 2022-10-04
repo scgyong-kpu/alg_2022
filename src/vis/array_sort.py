@@ -911,6 +911,7 @@ class QuickSortVisualizer(MergeSortVisualizer):
     self.left, self.right = -1, -1
     self.p, self.q = -1, -1
     self.swapping_pivot = False
+    self.stack_anim = 0
     self.fixeds = set()
   def set_left(self, left):
     self.left = left
