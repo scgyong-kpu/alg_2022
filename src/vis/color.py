@@ -21,6 +21,7 @@ class Color:
   line = dark[0]
 
   # Browser Colors
+  # https://htmlcolorcodes.com/color-names/
   
   IndianRed = color_argb('#CD5C5C')
   LightCoral = color_argb('#F08080')

@@ -724,18 +724,40 @@ class RadixSortLsdVisualizer(CountSortVisualizer):
     return rect
 
 class MergeSortVisualizer(SortVisualizer):
-  def calc_coords(self):
-    super().calc_coords()
-    sep = self.separator_size
-    self.table_y = self.config.screen_height - sep - self.cell_w
-    self.stack_line_height = self.cell_w * 2 // 3
-
+  bctx_left = {
+    'body_color': Color.LightGoldenrodYellow,
+    'line_color': Color.line,
+    'text_color': Color.Crimson,
+  }
+  bctx_right = {
+    'body_color': Color.LightCyan,
+    'line_color': Color.line,
+    'text_color': Color.Navy,
+  }
+  bctx_merge_from_left = {
+    'body_color': Color.PapayaWhip,
+    'line_color': Color.BlueViolet,
+    'text_color': Color.Crimson,
+  }
+  bctx_merge_from_right = {
+    'body_color': Color.PaleTurquoise,
+    'line_color': Color.BlueViolet,
+    'text_color': Color.Navy,
+  }
   def setup(self, data):
     super().setup(data)
     self.stack = []
     self.anim_level = -1
     self.merged = None
     self.merging_index = -1
+    self.ending_merge = False
+    self.adding_to_merged = False
+
+  def calc_coords(self):
+    super().calc_coords()
+    sep = self.separator_size
+    self.table_y = self.config.screen_height - sep - self.cell_w
+    self.stack_line_height = self.cell_w * 3 // 4
 
   def push(self, left, mid, right):
     self.stack.append((left, mid, right))
@@ -751,16 +773,26 @@ class MergeSortVisualizer(SortVisualizer):
     self.shared_array = shared_array
     self.merge_left = left
     self.merged_index = left - 1
+    self.lefts = set()
 
   def end_merge(self):
+    self.ending_merge = True
+    self.animate(1000)
+    self.ending_merge = False
     self.merged = None
     self.merging_index = -1
+    self.lefts = set()
 
   def add_to_merged(self, index, isLeft):
     self.merging_index = index
     self.merged_index += 1
+    if isLeft:
+      self.lefts.add(self.merged_index)
+    self.swap_count += 1
     self.draw()
-    self.wait(500)
+    self.adding_to_merged = True
+    self.animate(500)
+    self.adding_to_merged = False
 
   def draw_content(self):
     super().draw_content()
@@ -772,9 +804,11 @@ class MergeSortVisualizer(SortVisualizer):
     if stack_len < 2: return
     for lv in range(1, stack_len):
       left, mid, right = self.stack[lv]
+      if lv == stack_len - 1 and self.ending_merge and self.anim_progress > 0.5: break
       for i in range(left, right+1):
         rect = self.adj_rect(self.get_rect(i), lv)
-        self.draw_box(rect, text=str(self.data.array[i]))
+        ctx = self.get_item_context(i, lv)
+        self.draw_box(rect, text=str(self.data.array[i]), **ctx)
 
   def adj_rect(self, rect, level):
     x,y,w,h = rect
@@ -782,7 +816,7 @@ class MergeSortVisualizer(SortVisualizer):
     y -= (h + 2) * level
     if level == self.anim_level:
       y += (h + 2) * (1 - self.anim_progress)
-    return x,y,w,h
+    return [x,y,w,h]
 
   def draw_merged(self):
     if self.merged == None: return
@@ -790,11 +824,153 @@ class MergeSortVisualizer(SortVisualizer):
     top_level = merge_level - 1
     left, mid, right = self.stack[top_level]
     dest = left if self.shared_array else 0
-    print(f'{left=} {self.merged_index=}')
+    # print(f'{left=} {self.merged_index=}')
+    if self.ending_merge:
+      level_diff = 1 if top_level == 0 else 2
+      dy = level_diff * (self.stack_line_height + 2)
     for i in range(left, self.merged_index+1):
-      print(i)
       value = self.merged[dest]
       rect = self.adj_rect(self.get_rect(i), merge_level)
-      self.draw_box(rect, text=str(value))
+      if self.ending_merge:
+        rect[1] += self.anim_progress * dy
+      if self.adding_to_merged and i == self.merged_index:
+        ox,oy,_,_ = self.adj_rect(self.get_rect(self.merging_index), top_level)
+        rect[0] -= (1 - self.anim_progress) * (rect[0] - ox)
+        rect[1] -= (1 - self.anim_progress) * (rect[1] - oy)
+      ctx = self.bctx_merge_from_left if i in self.lefts else self.bctx_merge_from_right
+      self.draw_box(rect, text=str(value), **ctx)
       dest += 1
+
+  def get_item_context(self, index, level=0):
+    if level >= len(self.stack):
+      return self.bctx_normal
+
+    top_level = len(self.stack) - 1
+    if level == top_level and index in [self.compare_i1, self.compare_i2]:
+      return self.bctx_compare
+
+    left, mid, right = self.stack[level]
+    return self.bctx_left if index <= mid else self.bctx_right
+
+  # def draw_counts(self):
+  #   text = \
+  #     f'Data Length = {len(self.data.array)}\n' \
+  #     f'Comparison = {self.compare_count}\n' \
+  #     f'Swap = {self.swap_count}'
+  #   xy = self.separator_size, self.separator_size
+  #   self.draw_text(text, xy, center=False)
+
+class QuickSortVisualizer(MergeSortVisualizer):
+  def setup(self, data):
+    super().setup(data)
+    self.left, self.right = -1, -1
+    self.p, self.q = -1, -1
+    self.swapping_pivot = False
+    self.fixeds = set()
+  def set_left(self, left):
+    self.left = left
+  def set_right(self, right):
+    self.right = right
+  def set_p(self, p):
+    self.p = p
+  def set_q(self, q):
+    self.q = q
+  def set_pivot(self, pivot):
+    self.stack[-1][2] = pivot
+    self.fix(pivot)
+  def fix(self, index):
+    self.fixeds.add(index)
+  def push(self, left, right):
+    self.stack.append([left, right, -1])
+    self.left = left - 1
+    self.right = right + 1
+    self.stack_anim = 1
+    self.animate(500)
+    self.stack_anim = 0
+    self.p, self.q = -1, -1
+
+  def pop(self):
+    super().pop()
+    self.stack_anim = -1
+    self.animate(500)
+    self.stack_anim = 0
+
+  def swap(self, i1, i2, isPivot=False):
+    self.swapping_pivot = isPivot
+    super().swap(i1, i2)
+    self.swapping_pivot = False
+
+  def get_item_context(self, index):
+    if not self.stack:
+      return self.bctx_normal
+
+    if index in self.fixeds:
+      return self.bctx_fixed
+
+    if index in [self.compare_i1, self.compare_i2]:
+      return self.bctx_compare
+
+    left, right, pivot = self.stack[-1]
+    if left <= index and index <= self.left:
+      return self.bctx_left
+
+    if self.right <= index and index <= right:
+      return self.bctx_right
+
+  def calc_coords(self):
+    super().calc_coords()
+    self.stack_line_height = min(self.separator_size, self.cell_w)
+
+  def draw_content(self):
+    self.draw_stack()
+    SortVisualizer.draw_content(self)
+
+  def draw_stack(self):
+    stack_len = len(self.stack)
+    y = self.table_y - self.stack_line_height * stack_len
+    if self.stack_anim != 0:
+      y += (1 - self.anim_progress) * self.stack_anim * self.stack_line_height
+    for lv in range(0, stack_len):
+      left, right, pivot = self.stack[lv]
+      lx,_,_,_ = ArrayVisualizer.get_rect(self, left)
+      rx,_,w,_ = ArrayVisualizer.get_rect(self, right)
+      rect = [lx,y,rx-lx+w,self.stack_line_height]
+      self.draw_box(rect)
+
+      if pivot < 0:
+        rect[0] += self.cell_w
+        if left <= self.left:
+          rect[2] = (self.left - left) * self.cell_w
+        else:
+          rect[2] = 0
+        if self.swapping_pivot:
+          rect[0] -= self.cell_w * self.anim_progress
+      else:
+        rect[2] = (pivot - left) * self.cell_w
+
+      self.draw_box(rect, **self.bctx_left)
+
+      if pivot < 0:
+        sz = right - self.right + 1
+      else:
+        sz = right - pivot
+      w = sz * self.cell_w
+      x = rx - w + self.cell_w
+      rect = [x,y,w,self.stack_line_height]
+
+      self.draw_box(rect, **self.bctx_right)
+      if lv == stack_len - 1 and self.stack_anim == 0:
+        if self.p >= 0:
+          rect = ArrayVisualizer.get_rect(self, self.p)
+          rect[1] = y - self.config.font_size // 2
+          rect[3] = self.stack_line_height
+          self.draw_text(f'p={self.p}', rect_center(rect))
+        if self.q >= 0 and self.q < right:
+          rect = ArrayVisualizer.get_rect(self, self.q)
+          rect[1] = y + self.config.font_size // 2
+          rect[3] = self.stack_line_height
+          self.draw_text(f'q={self.q}', rect_center(rect))
+
+      y += self.stack_line_height
+
 
