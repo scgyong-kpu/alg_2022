@@ -32,10 +32,34 @@ def brute_all():
   # vis.pop()
   return s,e,d
 
+def devide_and_conquer():
+  cities.sort(key=lambda c:c.x)
+  for i in range(len(cities)):
+    cities[i].index = i
+  global y_aligned
+  y_aligned = sorted(cities, key=lambda c:c.y)
+
+  s,e,d = closest_pair(cities, 0, len(cities) - 1)
+  return s,e,d
+
+def closest_pair(arr, left, right):
+  size = right - left + 1
+  if size <= 1:
+    return -1, -1, 0
+  if size == 2:
+    s,e,d = left, right, distance(arr[left], arr[right])
+    vis.set_closest(left, right, s, e, d)
+    return s,e,d
+  if size == 3:
+    vis.set_phase('Brute force between 3 cities')
+    s,e,d = brute_force(arr, left, right)
+    vis.set_closest(left, right, s, e, d)
+    return s,e,d
+
 def main():
   print(cities)
-  s,e,d = brute_all()
-  # s,e,d = devide_and_conquer()
+  # s,e,d = brute_all()
+  s,e,d = devide_and_conquer()
   # print(s,e,d)
   print(cities[s],cities[e],d)
 
@@ -44,7 +68,7 @@ if __name__ == '__main__':
   vis = Visualizer('Closest Pair')
   while True:
     beg = randint(0, 100)
-    end = randint(beg+10, beg+20)
+    end = beg+3 #randint(beg+10, beg+20)
     cities = five_letter_cities[beg:end]
     vis.setup(vis.get_main_module())
     main()
