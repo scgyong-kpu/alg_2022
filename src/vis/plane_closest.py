@@ -66,6 +66,19 @@ class ClosestPairVisualizer(PlanarVisualizer):
     self.set_comp_context(self.comp_a1, None)
     self.set_comp_context(self.closest, None)
     self.comp_a1 = [-1, -1, 0]
+  def set_comp_context(self, a, context):
+    if a[0] >= 0: 
+      if context == None and self.in_strip(a[0]):
+        context = self.cctx_strip
+      self.set_city_context(a[0], context)
+    if a[1] >= 0: 
+      if context == None and self.in_strip(a[1]):
+        context = self.cctx_strip
+      self.set_city_context(a[1], context)
+  def in_strip(self, idx):
+    for c in self.strip:
+      if c.index == idx: return True
+    return False
   def set_phase(self, phase=''):
     self.phase_str = phase
   def set_strip(self, strip=[], cx1=-1, cx2=-1):
@@ -98,9 +111,6 @@ class ClosestPairVisualizer(PlanarVisualizer):
   # def finish(self, s,e,d):
   #   self.closests = dict()
   #   self.closests[0] = [0, s, e, d]
-  def set_comp_context(self, a, context):
-    if a[0] >= 0: self.set_city_context(a[0], context)
-    if a[1] >= 0: self.set_city_context(a[1], context)
   def draw_content(self):
     self.draw_stack()
     self.draw_strip()
