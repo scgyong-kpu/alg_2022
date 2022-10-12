@@ -49,7 +49,7 @@ class ClosestPairVisualizer(PlanarVisualizer):
     self.pushing = False
     self.closest = self.stack.pop()[0]
   def compare(self, i1, i2, dist):
-    print(f'compare: {i1=} {i2=}')
+    # print(f'compare: {i1=} {i2=}')
     self.compare_count += 1
     self.comp_a1 = [i1, i2, dist]
     if dist < self.closest[2]:
@@ -72,14 +72,14 @@ class ClosestPairVisualizer(PlanarVisualizer):
   def set_closest(self, left, right=-1, s=-1, e=-1, d=-1):
     if right < 0:
       if left in self.closests: 
-        print(f'removing {left}= {self.closests[left]}')
+        # print(f'removing {left}= {self.closests[left]}')
         del self.closests[left]
       return
     self.closests[left] = [right, s, e, d]
-    print(f'adding {left}: {[right, s, e, d]}')
+    # print(f'adding {left}: {[right, s, e, d]}')
     for i in range(left+1, right+1):
       if i in self.closests:
-        print(f'removing {i}: {self.closests[i]}')
+        # print(f'removing {i}: {self.closests[i]}')
         del self.closests[i]
     s,e,d = self.closest
     if s in range(left, right+1) and e in range(left, right+1):
