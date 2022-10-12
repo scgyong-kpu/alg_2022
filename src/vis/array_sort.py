@@ -1027,3 +1027,43 @@ class QuickSortVisualizer(MergeSortVisualizer):
 
   def insertion_level(self):
     return len(self.stack)
+
+class SelectionVisualizer(QuickSortVisualizer):
+  def setup(self, data):
+    super().setup(data)
+    self.k_stack = []
+
+  def draw_stack(self):
+    super().draw_stack()
+    stack_len = len(self.stack)
+    y = self.table_y - self.stack_line_height * stack_len
+    if self.stack_anim != 0:
+      y += (1 - self.anim_progress) * self.stack_anim * self.stack_line_height
+
+    for lv in range(0, stack_len):
+      left, right, pivot = self.stack[lv]
+      is_last_q = lv == stack_len - 1 and self.q == pivot
+      if pivot >= 0 and not is_last_q:
+        rect = ArrayVisualizer.get_rect(self, pivot)
+        rect[1], rect[3] = y, self.stack_line_height
+        self.draw_text(str(pivot), rect_center(rect))
+      y += self.stack_line_height
+
+  def push(self, left, right, k):
+    self.k_stack.append(k)
+    super().push(left, right)
+  def pop(self):
+    super().pop()
+    self.k_stack.pop()
+
+  def draw_counts(self):
+    text = f'Data Length = {len(self.data.array)}'
+    prefix = ''
+    for i in range(len(self.stack)):
+      # print(i, self.stack, self.k_stack)
+      l,r,p = self.stack[i]
+      k = self.k_stack[i]
+      text += f'\n{prefix}Find #{k} in [{l}~{r}]'
+      prefix = '='
+    xy = self.separator_size, self.separator_size
+    self.draw_text(text, xy, center=False)

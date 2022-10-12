@@ -49,7 +49,11 @@ class PlanarVisualizer(Visualizer):
     return None
 
   def set_city_context(self, index, context):
-    self.city_contexts[index] = context
+    if context == None:
+      if index in self.city_contexts:
+        del self.city_contexts[index]
+    else:
+      self.city_contexts[index] = context
 
   def get_edge_context(self, u,v):
     if u > v: u,v = v,u
@@ -59,7 +63,10 @@ class PlanarVisualizer(Visualizer):
 
   def set_edge_context(self, u,v, context):
     if u > v: u,v = v,u
-    self.edge_contexts[(u,v)] = context
+    if context == None:
+      del self.edge_contexts[index]
+    else:
+      self.edge_contexts[(u,v)] = context
 
   def draw(self):
     self.clear()
@@ -145,7 +152,11 @@ class PlanarVisualizer(Visualizer):
     if isinstance(c2, int): c2 = self.data.cities[c2]
     xy1, xy2 = self.city2s(c1), self.city2s(c2)
     line_color = attr(args, 'edge_line_color', Color.line)
-    pg.draw.aaline(self.screen, line_color, xy1, xy2)
+    thickness = attr(args, 'edge_line_width', 1)
+    if thickness == 1:
+      pg.draw.aaline(self.screen, line_color, xy1, xy2)
+    else:
+      pg.draw.line(self.screen, line_color, xy1, xy2, thickness)
     if value != None:
       shows_value = attr(args, 'shows_edge_value', False)
       if shows_value:
