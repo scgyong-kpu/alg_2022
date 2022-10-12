@@ -7,6 +7,11 @@ class ClosestPairVisualizer(PlanarVisualizer):
     'city_line_color': Color.DarkRed,
     'city_name_color': Color.DarkGreen,
   }
+  cctx_strip = {
+    'city_body_color': Color.Yellow,
+    'city_line_color': Color.MediumVioletRed,
+    'city_name_color': Color.Purple,
+  }
   ectx_comp1 = {
     'edge_line_color': Color.PaleGreen,
     'edge_value_color': Color.DarkOliveGreen,
@@ -64,6 +69,12 @@ class ClosestPairVisualizer(PlanarVisualizer):
   def set_phase(self, phase=''):
     self.phase_str = phase
   def set_strip(self, strip=[], cx1=-1, cx2=-1):
+    if strip:
+      for c in strip:
+        self.set_city_context(c.index, self.cctx_strip)
+    elif self.strip:
+      for c in self.strip:
+        self.set_city_context(c.index, None)
     self.strip = strip
     if strip:
       self.phase_str = 'Comparing cities in strip'
