@@ -87,7 +87,7 @@ if __name__ == '__main__':
   vis = Visualizer('Closest Pair')
   while True:
     beg = randint(0, 100)
-    end = beg+6 #randint(beg+10, beg+20)
+    end = beg+7 #randint(beg+10, beg+20)
     cities = five_letter_cities[beg:end]
     vis.setup(vis.get_main_module())
     main()
