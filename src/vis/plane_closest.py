@@ -33,15 +33,17 @@ class ClosestPairVisualizer(PlanarVisualizer):
     self.pushing = 0
     self.closests = dict()
     self.strip = []
+    self.cx1, self.cx2 = -1, -1
+    self.phase_str = ''
   def push(self, s=-1, e=-1, m=-1):
     self.stack.append([self.closest, [s,e,m]])
-    print(f'push:{len(self.stack)}')
+    self.phase_str = f'push:{len(self.stack)}'
     self.closest = [-1, -1, float('inf')]
     self.pushing = 1
     self.animate(1000)
     self.pushing = False
   def pop(self):
-    print(f'pop:{len(self.stack)} {self.stack[-1]}')
+    self.phase_str = f'pop:{len(self.stack)}'
     self.pushing = -1
     self.animate(1000)
     self.pushing = False
@@ -59,8 +61,14 @@ class ClosestPairVisualizer(PlanarVisualizer):
     self.set_comp_context(self.comp_a1, None)
     self.set_comp_context(self.closest, None)
     self.comp_a1 = [-1, -1, 0]
-  def set_strip(self, strip=[]):
+  def set_phase(self, phase=''):
+    self.phase_str = phase
+  def set_strip(self, strip=[], cx1=-1, cx2=-1):
     self.strip = strip
+    if strip:
+      self.phase_str = 'Comparing cities in strip'
+    self.cx1, _ = self.o2s(cx1, 0)
+    self.cx2, _ = self.o2s(cx2, 0)
   def set_closest(self, left, right=-1, s=-1, e=-1, d=-1):
     if right < 0:
       if left in self.closests: 
@@ -131,16 +139,17 @@ class ClosestPairVisualizer(PlanarVisualizer):
   def draw_strip(self):
     n_strip = len(self.strip)
     if n_strip == 0: return
-    x1, y1 = self.city2s(self.strip[0])
-    x2, y2 = x1, y1
+    x1, x2 = self.cx1, self.cx2
+    _, y1 = self.city2s(self.strip[0])
+    y2 = y1
     for i in range(1, n_strip):
       x, y = self.city2s(self.strip[i])
-      x1 = min(x1, x)
+      # x1 = min(x1, x)
       y1 = min(y1, y)
-      x2 = max(x2, x)
+      # x2 = max(x2, x)
       y2 = max(y2, y)
     rect = rect_inflate([x1,y1,x2-x1,y2-y1], 2 * self.city_radius)
-    pg.draw.rect(self.screen, Color.line, rect, 2)
+    pg.draw.rect(self.screen, Color.line, rect, 5)
   def adj_divisions(self, rect1, rect2):
     x1,y1,w1,h1 = rect1
     x2,y2,w2,h2 = rect2
@@ -163,10 +172,18 @@ class ClosestPairVisualizer(PlanarVisualizer):
     self.draw_edge(i1, i2, f'{dist:.1f}', **ectx)
   def draw_closest_info(self):
     i1, i2, dist = self.closest
-    if i1 < 0: return
-    c1, c2 = self.data.cities[i1], self.data.cities[i2]
-    text = f'{len(self.data.cities)} cities, {self.compare_count} comparisons'
-    text += f' [{c1.name} ~ {c2.name}] {dist:.1f}'
+    if i1 < 0:
+      if self.closests:
+        left = (list(self.closests.keys()))[0]
+        right, i1, i2, dist = self.closests[left]
+
+    if i1 >= 0:
+      c1, c2 = self.data.cities[i1], self.data.cities[i2]
+      text = f'{len(self.data.cities)} cities, {self.compare_count} comparisons'
+      text += f' [{c1.name} ~ {c2.name}] {dist:.1f}'
+    else:
+      text = ''
+    text += '\n'+self.phase_str
     xy = 1,1 #self.separator_size, self.separator_size
     self.draw_text(text, xy, center=False)
 
