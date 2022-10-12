@@ -56,8 +56,27 @@ def closest_pair(arr, left, right):
     vis.set_closest(left, right, s, e, d)
     return s,e,d
 
+  mid = size // 2 + left - 1 # 왼쪽 그룹의 맨 오른쪽 점이므로 1을 뺀다
+  # mid is in left group
+
+  vis.push(left, right, mid)
+
+  ls, le, ld = closest_pair(arr, left, mid)    # 왼쪽 그룹에서 가장 까가운 것을 구한다
+  rs, re, rd = closest_pair(arr, mid+1, right) # 왼쪽 그룹에서 가장 까가운 것을 구한다
+
+  vis.set_closest(left, -1)
+  vis.compare(ls,le,ld)
+  vis.set_closest(mid+1, -1)
+  vis.compare(rs,re,rd)
+
+  s, e, d = (ls, le, ld) if ld <= rd else (rs, re, rd) # 두 그룹의 해 중에서 더 가까운 것을 구한다
+  vis.set_closest(left, right, s, e, d)
+  vis.pop()
+  return s, e, d                               # 그것이 이번의 해이다 (?)
+
+
 def main():
-  print(cities)
+  # print(cities)
   # s,e,d = brute_all()
   s,e,d = devide_and_conquer()
   # print(s,e,d)
@@ -68,7 +87,7 @@ if __name__ == '__main__':
   vis = Visualizer('Closest Pair')
   while True:
     beg = randint(0, 100)
-    end = beg+3 #randint(beg+10, beg+20)
+    end = beg+4 #randint(beg+10, beg+20)
     cities = five_letter_cities[beg:end]
     vis.setup(vis.get_main_module())
     main()
