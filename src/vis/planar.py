@@ -27,6 +27,8 @@ class PlanarVisualizer(Visualizer):
     self.compute_min_max()
     self.city_contexts = dict()
     self.edge_contexts = dict()
+    self.legend_right = self.separator_size
+    self.legend_bottom = self.separator_size
     # self.draw()
 
   def compute_min_max(self):
@@ -80,8 +82,8 @@ class PlanarVisualizer(Visualizer):
     self.draw_all_cities()
 
   def calc_coords(self):
-    cw = self.config.screen_width - 2 * self.separator_size
-    ch = self.config.screen_height - 2 * self.separator_size
+    cw = self.config.screen_width - self.separator_size - self.legend_right
+    ch = self.config.screen_height - self.separator_size - self.legend_bottom
 
     scale_x, scale_y = cw / self.diff_x, ch / self.diff_y
     if scale_x < scale_y:
@@ -208,3 +210,24 @@ class PlanarVisualizer(Visualizer):
     ay = y2 + length * math.sin(angle)
     return [ax, ay]
 
+
+class KruskalVisualizer(PlanarVisualizer):
+  def_city_context = {
+    'city_body_color': Color.LightBlue,
+    'city_line_color': Color.DeepSkyBlue,
+    'city_name_color': Color.DarkBlue,
+    'shows_city_index': True,
+    # 'shows_city_coord': True,
+  }
+
+  def setup(self, data):
+    super().setup(data)
+
+  def calc_coords(self):
+    self.legend_right = self.config.screen_width // 3
+    super().calc_coords()
+
+  def draw_content(self):
+    # if hasattr(self.data, 'edges'):
+    #   self.draw_all_edges()
+    self.draw_all_cities(**self.def_city_context)
