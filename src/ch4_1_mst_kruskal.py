@@ -40,10 +40,22 @@ data_sets = [
 n_data_sets = len(data_sets)
 
 def main():
+  n_cities = len(cities)
   edges.sort(key=lambda e: e[2])
-  print(edges)
   vis.sort_edges()
+  copy = edges[:]
+
   mst = []
+  total_cost = 0
+
+  while len(mst) < n_cities - 1 and copy:
+    u,v,w = copy.pop(0)
+    c1, c2 = cities[u], cities[v]
+    total_cost += w
+    mst.append((u, v))
+    vis.append(u, v, w)
+    
+    if (len(mst) == 1): break
 
 if __name__ == '__main__':
   vis = Visualizer('Minimum Spanning Tree - Ksuskal')

@@ -283,3 +283,13 @@ class KruskalVisualizer(PlanarVisualizer):
         height = legend * w / self.max_weight
         pg.draw.line(self.screen, Color.Crimson, [x,y], [x,y+height])
       x += ix
+
+  def append(self, u, v, w):
+    if u > v: u,v = v,u
+    if (u,v) in self.candidates:
+      del self.candidates[self.candidates.index((u,v))]
+
+    self.draw()
+    self.wait(1000)
+
+
