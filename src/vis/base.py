@@ -153,6 +153,9 @@ class Visualizer:
         if e.type == pg.KEYDOWN and e.key == pg.K_r:
           self.speed = 1
           self.loop = self.paused = False
+          mods = pg.key.get_mods()
+          self.restart_lshift = mods & pg.KMOD_LSHIFT != 0
+          self.restart_rshift = mods & pg.KMOD_RSHIFT != 0
           return True
         self.handle_event(e)
     pg.quit()

@@ -219,6 +219,11 @@ class KruskalVisualizer(PlanarVisualizer):
     'shows_city_index': True,
     # 'shows_city_coord': True,
   }
+  def_edge_context = {
+    'edge_line_color': Color.Teal,
+    'edge_value_color': Color.DarkGreen,
+    'shows_edge_value': True,
+  }
 
   def setup(self, data):
     super().setup(data)
@@ -228,6 +233,6 @@ class KruskalVisualizer(PlanarVisualizer):
     super().calc_coords()
 
   def draw_content(self):
-    # if hasattr(self.data, 'edges'):
-    #   self.draw_all_edges()
+    if hasattr(self.data, 'edges'):
+      self.draw_all_edges(**self.def_edge_context)
     self.draw_all_cities(**self.def_city_context)

@@ -1,3 +1,7 @@
+import random
+import math
+from functools import cmp_to_key
+
 class City:
   def __init__(self, name, x, y, index=0):
     self.name = name
@@ -1021,6 +1025,61 @@ five_letter_cities = [
   City("Neigh", 99, 503, 998),
   City("Washy", 660, 347, 999),
 ]
+
+def edge_compare(a, b):
+  if a[0] == b[0]: return a[1] - b[1]
+  return a[0] - b[0]
+
+def distance(c1, c2):
+  dx, dy = c1.x - c2.x, c1.y - c2.y
+  return math.sqrt(dx ** 2 + dy ** 2)
+
+def make_edges(cities, max_factor=1/4):
+  # print('Edge maker')
+  edge_set = set()
+
+  min_x, max_x = float('inf'), float('-inf')
+  min_y, max_y = float('inf'), float('-inf')
+  for c in cities:
+    if min_x > c.x: min_x = c.x
+    if min_y > c.y: min_y = c.y
+    if max_x < c.x: max_x = c.x
+    if max_y < c.y: max_y = c.y
+  diff_x = max_x - min_x
+  diff_y = max_y - min_y
+  max_dist = min(diff_x, diff_y) * max_factor
+
+  n_cities = len(cities)
+  for c in range(n_cities):
+    city = cities[c]
+
+    n, nn, count = 0, 0, random.randint(2, 4)
+    while n < count:
+      t = random.randrange(n_cities)
+      nn += 1
+      if nn > 100: 
+        print('Too many tries on', c, city.name)
+        break
+      if t == c: continue
+      c1, c2 = (c, t) if c < t else (t, c)
+      dist = distance(city, cities[t])
+      # print(dist)
+      if dist > max_dist: continue
+      edge_set.add((c1, c2))
+      n += 1
+
+  edge_list = list(edge_set)
+  edge_list.sort(key=cmp_to_key(edge_compare))
+
+  # print(edge_list, len(edge_list))
+  edges = []
+  for c, t in edge_list:
+    dist = distance(cities[c], cities[t])
+    int_dist = int(dist * random.uniform(0.5, 1.5))
+    edges.append((c, t, int_dist))
+
+  print(edges, len(edges))
+  return edges
 
 if __name__ == '__main__':
   # City.apply_index(five_letter_cities)
