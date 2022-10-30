@@ -39,6 +39,12 @@ data_sets = [
 
 n_data_sets = len(data_sets)
 
+def main():
+  sorted_edges = sorted(edges, key=lambda e: e[2])
+  print(sorted_edges)
+  vis.draw()
+  mst = []
+
 if __name__ == '__main__':
   vis = Visualizer('Minimum Spanning Tree - Ksuskal')
   idx = 0
@@ -49,7 +55,8 @@ if __name__ == '__main__':
     City.apply_index(cities)
     edges = ds['edges']
     vis.setup(vis.get_main_module())
-    vis.draw()
+    # vis.draw()
+    main()
     again = vis.end()
     if not again: break
     idx = (idx + 1) % n_data_sets
