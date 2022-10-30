@@ -55,7 +55,7 @@ def main():
     mst.append((u, v))
     vis.append(u, v, w)
     
-    if (len(mst) == 1): break
+    if (len(mst) == 5): break
 
 if __name__ == '__main__':
   vis = Visualizer('Minimum Spanning Tree - Ksuskal')
