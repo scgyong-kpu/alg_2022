@@ -220,13 +220,19 @@ class KruskalVisualizer(PlanarVisualizer):
     # 'shows_city_coord': True,
   }
   grayed_edge_context = {
-    'edge_line_color': Color.LightGray,
-    'edge_value_color': Color.LightGray,
+    'edge_line_color': Color.WhiteSmoke,
+    'edge_value_color': Color.WhiteSmoke,
     'shows_edge_value': True,
   }
   def_edge_context = {
     'edge_line_color': Color.Teal,
     'edge_value_color': Color.DarkGreen,
+    'shows_edge_value': True,
+  }
+  ectx_ignore = {
+    'edge_line_color': Color.Crimson,
+    'edge_value_color': Color.DarkRed,
+    'edge_line_width': 5,
     'shows_edge_value': True,
   }
   bctx_current = {
@@ -294,8 +300,11 @@ class KruskalVisualizer(PlanarVisualizer):
     for u,v,w in self.data.edges:
       if u > v: u,v = v,u
       if (u,v) in self.candidates:
-        height = legend * w / self.max_weight
-        pg.draw.line(self.screen, Color.Crimson, [x,y], [x,y+height])
+        color = Color.Crimson
+      else:
+        color = Color.WhiteSmoke
+      height = legend * w / self.max_weight
+      pg.draw.line(self.screen, color, [x,y], [x,y+height])
       x += ix
 
   def append(self, u, v, w):
@@ -305,6 +314,13 @@ class KruskalVisualizer(PlanarVisualizer):
 
     self.appended_edge = (u,v)
     self.draw()
+    self.wait(1000)
+
+  def ignore(self, u, v, w):
+    if u > v: u,v = v,u
+    self.draw()
+    self.draw_edge(u, v, w, **self.ectx_ignore)
+    self.update_display()
     self.wait(1000)
 
   def draw_roots(self):
@@ -317,6 +333,13 @@ class KruskalVisualizer(PlanarVisualizer):
       r = self.data.roots[i]
       ci = self.data.cities[i]
       cr = self.data.cities[r]
-      ctx = self.bctx_current if i == v else {}
-      self.draw_box([x,y,w,h], text=f'{ci} - {cr}', **ctx)
+      if i == v:
+        ctx = self.bctx_current
+      else:
+        ctx = {}
+      self.draw_box([x,y,w,h], text=f'{ci.index}.{ci.name} - {cr.index}.{cr.name}', **ctx)
       y += h
+
+  def finish(self):
+    self.appended_edge = -1, -1
+    self.draw()
