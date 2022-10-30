@@ -39,8 +39,23 @@ data_sets = [
 
 n_data_sets = len(data_sets)
 
+def union(u, v):
+  global roots
+  uroot = find_root(u)
+  vroot = find_root(v)
+  roots[vroot] = uroot
+
+def find_root(u):
+  if u != roots[u]:
+    roots[u] = find_root(roots[u]) # 경로압축
+  return roots[u]
+
 def main():
   n_cities = len(cities)
+
+  global roots
+  roots = [x for x in range(n_cities)]
+
   edges.sort(key=lambda e: e[2])
   vis.sort_edges()
   copy = edges[:]
@@ -53,9 +68,10 @@ def main():
     c1, c2 = cities[u], cities[v]
     total_cost += w
     mst.append((u, v))
+    union(u, v)
     vis.append(u, v, w)
     
-    if (len(mst) == 6): break
+    if (len(mst) == 5): break
 
 if __name__ == '__main__':
   vis = Visualizer('Minimum Spanning Tree - Ksuskal')
