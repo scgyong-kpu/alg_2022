@@ -232,18 +232,54 @@ class KruskalVisualizer(PlanarVisualizer):
 
   def setup(self, data):
     super().setup(data)
+    self.candidates = []
+    self.max_weight = max(e[2] for e in data.edges)
 
   def calc_coords(self):
     self.legend_right = self.config.screen_width // 3
+    self.legend_bottom = self.config.screen_height // 3
+
     super().calc_coords()
+
+    self.weights_y = self.config.screen_height - self.legend_bottom + self.separator_size
+    self.weights_w = self.config.screen_width - self.legend_right - self.separator_size
+    self.weights_h = self.legend_bottom - 2 * self.separator_size
 
   def draw_content(self):
     if hasattr(self.data, 'edges'):
       self.draw_all_edges()
     self.draw_all_cities(**self.def_city_context)
 
-  # def get_edge_context(self, u,v):
-  #   ctx = super().get_edge_context(u, v)
-  #   if ctx is None:
-  #     return self.grayed_edge_context
-  #   return ctx
+    self.draw_candidates()
+
+  def get_edge_context(self, u,v):
+    if u > v: u,v = v,u
+    if (u,v) in self.candidates:
+      return self.grayed_edge_context
+    return super().get_edge_context(u, v)
+
+  def sort_edges(self):
+    self.candidates = []
+    self.weights = dict()
+    max_weight = 0
+    for u,v,w in self.data.edges:
+      if u > v: u,v = v,u
+      self.candidates.append((u,v))
+      self.weights[(u,v)] = w
+      if max_weight < w:
+        max_weight = w
+      self.draw()
+      self.wait(100)
+    self.max_weight = max_weight
+
+  def draw_candidates(self):
+    x = self.separator_size
+    y = self.weights_y
+    legend = self.weights_h
+    ix = self.weights_w // len(self.data.edges)
+    for u,v,w in self.data.edges:
+      if u > v: u,v = v,u
+      if (u,v) in self.candidates:
+        height = legend * w / self.max_weight
+        pg.draw.line(self.screen, Color.Crimson, [x,y], [x,y+height])
+      x += ix

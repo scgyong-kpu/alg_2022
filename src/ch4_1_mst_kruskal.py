@@ -40,9 +40,9 @@ data_sets = [
 n_data_sets = len(data_sets)
 
 def main():
-  sorted_edges = sorted(edges, key=lambda e: e[2])
-  print(sorted_edges)
-  vis.draw()
+  edges.sort(key=lambda e: e[2])
+  print(edges)
+  vis.sort_edges()
   mst = []
 
 if __name__ == '__main__':
