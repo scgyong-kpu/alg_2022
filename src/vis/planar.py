@@ -66,7 +66,7 @@ class PlanarVisualizer(Visualizer):
   def set_edge_context(self, u,v, context):
     if u > v: u,v = v,u
     if context == None:
-      del self.edge_contexts[index]
+      del self.edge_contexts[(u,v)]
     else:
       self.edge_contexts[(u,v)] = context
 
@@ -404,7 +404,7 @@ class PrimVisualizer(KruskalVisualizer):
       self.draw_all_edges()
     self.draw_all_cities()
 
-    self.draw_candidates()
+    # self.draw_candidates()
     self.draw_right_pane()
 
   def draw_right_pane(self):
@@ -464,6 +464,7 @@ class PrimVisualizer(KruskalVisualizer):
     else: return
 
     ci_orig = self.connections[ci]
+    self.connections[ci] = ci_from
     self.set_edge_context(ci, ci_from, self.candidate_edge_context)
     self.set_edge_context(ci, ci_orig, self.compare_edge_context)
     self.update_index = ci
@@ -471,7 +472,7 @@ class PrimVisualizer(KruskalVisualizer):
     self.draw()
     self.wait(1000)
     self.update_index = -1
-    self.set_edge_context(ci, ci_orig, self.grayed_edge_context)
+    self.set_edge_context(ci, ci_orig, None)
     self.draw()
 
   def fix(self, ci, ci_from=None):
@@ -488,6 +489,10 @@ class PrimVisualizer(KruskalVisualizer):
     self.pop_index = ci
     self.animate(1000)
     self.pop_index = -1
+    for cc in self.data.completed:
+      if cc == ci_from: continue
+      if self.get_edge_context(ci, cc) == None: continue
+      self.set_edge_context(ci, cc, None)
     for i in range(len(self.weights)):
       if self.weights[i][1] == ci:
         self.weights.pop(i)
@@ -500,11 +505,12 @@ class PrimVisualizer(KruskalVisualizer):
     self.draw()
     self.wait(1000)
     self.update_index = -1
-    self.set_edge_context(ci_from, ci, self.grayed_edge_context)
+    self.set_edge_context(ci_from, ci, None)
     self.draw()
 
   def finish(self):
     self.current_index = -1
+    print(self.weights)
     self.draw()
 
 
