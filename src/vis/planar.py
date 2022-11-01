@@ -363,6 +363,11 @@ class PrimVisualizer(KruskalVisualizer):
     'shows_city_index': True,
     # 'shows_city_coord': True,
   }
+  candidate_edge_context = {
+    'edge_line_color': Color.LightGray,
+    'edge_value_color': Color.SkyBlue,
+    'shows_edge_value': True,
+  }
   def_city_context = grayed_city_context
 
   def setup(self, data):
@@ -404,11 +409,13 @@ class PrimVisualizer(KruskalVisualizer):
 
   # def get_edge_context(self, u,v):
 
-  def append(self, weight, ci):
+  def append(self, weight, ci, c2=None):
     self.set_city_context(ci, self.candidate_city_context)
+    if c2 != None:
+      self.set_edge_context(ci, c2, self.candidate_edge_context)
     self.weights.append((weight, ci))
-    # self.draw()
     self.push_index = ci
+    # msec = 1000 if c2 == None else 500
     self.animate(1000)
     self.push_index = -1
 
