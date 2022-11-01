@@ -262,7 +262,7 @@ class KruskalVisualizer(PlanarVisualizer):
     self.roots_x2 = self.roots_x + self.roots_w // 2
     self.roots_y = self.separator_size
     self.roots_h = self.config.screen_height - 2 * self.separator_size
-    self.root_h = max(self.config.font_size, self.roots_h // len(self.data.roots))
+    self.root_h = max(self.config.font_size, self.roots_h // len(self.data.cities))
 
   def draw_content(self):
     if hasattr(self.data, 'edges'):
@@ -270,7 +270,7 @@ class KruskalVisualizer(PlanarVisualizer):
     self.draw_all_cities(**self.def_city_context)
 
     self.draw_candidates()
-    self.draw_roots()
+    self.draw_right_pane()
 
   def get_edge_context(self, u,v):
     if u > v: u,v = v,u
@@ -323,7 +323,9 @@ class KruskalVisualizer(PlanarVisualizer):
     self.update_display()
     self.wait(1000)
 
-  def draw_roots(self):
+  def draw_right_pane(self):
+    if not hasattr(self.data, 'roots'): return
+
     x = self.roots_x
     y = self.roots_y
     w = self.roots_w
@@ -343,3 +345,29 @@ class KruskalVisualizer(PlanarVisualizer):
   def finish(self):
     self.appended_edge = -1, -1
     self.draw()
+
+class PrimVisualizer(KruskalVisualizer):
+  def_edge_context = KruskalVisualizer.grayed_edge_context
+
+  def setup(self, data):
+    super().setup(data)
+
+  def draw_right_pane(self):
+    x = self.roots_x
+    y = self.roots_y
+    w = self.roots_w
+    h = self.root_h
+    u,v = self.appended_edge
+    # for i in range(len(self.data.roots)):
+    #   r = self.data.roots[i]
+    #   ci = self.data.cities[i]
+    #   cr = self.data.cities[r]
+    #   if i == v:
+    #     ctx = self.bctx_current
+    #   else:
+    #     ctx = {}
+    #   self.draw_box([x,y,w,h], text=f'{ci.index}.{ci.name} - {cr.index}.{cr.name}', **ctx)
+    #   y += h
+
+  # def get_edge_context(self, u,v):
+
