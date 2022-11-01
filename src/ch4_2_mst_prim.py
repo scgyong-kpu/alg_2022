@@ -47,12 +47,13 @@ def build_graph():
     graph[u][v] = w
     graph[v][u] = w
   print(graph)
-  # print_adj_matrix()
+  print_adj_matrix()
 
 def print_adj_matrix():
   for u in range(n_cities):
     for v in range(n_cities):
-      print(f'{graph[u][v]:5d}', end='')
+      w = graph[u][v] if v in graph[u] else 0
+      print(f'{w:5d}', end='')
     print()
   print()
 
