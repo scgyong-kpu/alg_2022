@@ -81,40 +81,30 @@ def main():
     w, v, u = pop_smallest_weight()
     if u != v:                       # 최초 시작점은 u 와 v 가 같으므로 생략한다
       mst.append((u, v))             # 결과물에 추가한다
-    completed.add(v)
+    completed.add(v)     # 이번에 v 를 확정한다
     vis.fix(v, u)
     print('>', weights)
     print(mst)
 
-    adjacents = graph[v]
+    adjacents = graph[v] # v 에 연결되는 점들 중에서
     for adj in adjacents:
-      if adj in completed: continue
+      if adj in completed: continue # 이미 완성된 점은 건드리지 말자
       weight = adjacents[adj]
-      prev_weight = find_weight(adj)
-      print(f'find_weight({adj}, {prev_weight})')
-      if prev_weight == None:
-        weights.append((weight, adj, v))
+      for wi in range(0, len(weights)): # 가중치들을 저장해놓은 곳에서
+        w, c1, c2 = weights[wi]
+        if c1 == adj:    # 연결되는 점에 대한 기록이 있다면
+          if weight < w: # 그리고 이번에 연결되는 점의 가중치가 더 작다면
+            weights[wi] = (weight, adj, v) # 가중치 정보를 교체한다
+            vis.update(weight, adj, v)
+          else:
+            vis.compare(adj, v)
+          break
+      else: # for 에서 break 로 종료하지 않았다면
+        weights.append((weight, adj, v)) # 기록이 없었으므로 추가한다
         vis.append(weight, adj, v)
-      elif prev_weight > weight:
-        update_weight(adj, weight, v)
-        vis.update(weight, adj)
-      else:
-        vis.compare(adj, v)
 
     if len(completed) >= 3: break
 
-def find_weight(ci):
-  for e in weights:
-    if e[1] == ci:
-      return e[0]
-  return None
-
-def update_weight(ci_to, weight, ci_from):
-  for wi in range(0, len(weights)):
-    if ci_to == weights[wi][1]:
-      weights[wi] = (weight, ci_to, ci_from)
-      return
-  return
 
 def pop_smallest_weight():
   min_wi = 0

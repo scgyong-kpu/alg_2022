@@ -392,9 +392,12 @@ class PrimVisualizer(KruskalVisualizer):
   def setup(self, data):
     super().setup(data)
     self.weights = []
+    self.connections = dict()
     self.push_index = -1
     self.pop_index = -1
     self.update_index = -1
+    self.fixing_index = -1
+    self.current_index = -1
 
   def draw_content(self):
     if hasattr(self.data, 'edges'):
@@ -423,17 +426,27 @@ class PrimVisualizer(KruskalVisualizer):
         animates_y = True
       elif ci == self.update_index:
         ctx = self.bctx_updated
+      elif ci == self.fixing_index:
+        ctx = self.bctx_current
 
       ty = y
       if animates_y and ci != self.pop_index: ty -= self.anim_progress * h
       self.draw_box([x,ty,w,h], text=text, **ctx)
       y += h
 
+  def draw_city(self, city, **args):
+    if city == self.current_index:
+      radius = self.config.font_size
+      c = self.data.cities[city]
+      pg.draw.circle(self.screen, Color.line, self.city2s(c), radius, 1)
+    super().draw_city(city, **args)
+
   # def get_edge_context(self, u,v):
 
   def append(self, weight, ci, c2=None):
     self.set_city_context(ci, self.candidate_city_context)
     if c2 != None:
+      self.connections[ci] = c2
       self.set_edge_context(ci, c2, self.candidate_edge_context)
     self.weights.append((weight, ci))
     self.push_index = ci
@@ -441,7 +454,7 @@ class PrimVisualizer(KruskalVisualizer):
     self.animate(1000)
     self.push_index = -1
 
-  def update(self, weight, ci):
+  def update(self, weight, ci, ci_from):
     print('update', weight, ci)
     for i in range(len(self.weights)):
       w, c = self.weights[i]
@@ -450,19 +463,26 @@ class PrimVisualizer(KruskalVisualizer):
         break
     else: return
 
+    ci_orig = self.connections[ci]
+    self.set_edge_context(ci, ci_from, self.compare_edge_context)
+    self.set_edge_context(ci, ci_orig, self.grayed_edge_context)
     self.update_index = ci
     self.draw()
-    self.wait(500)
+    self.wait(1000)
     self.weights[wi] = (weight, ci)
     self.update_index = -1
+    self.set_edge_context(ci, ci_from, self.candidate_edge_context)
     self.draw()
-    self.wait(500)
 
   def fix(self, ci, ci_from=None):
+    self.current_index = ci
+    self.connections[ci_from] = ci
     if ci != ci_from:
+      self.fixing_index = ci
       self.set_edge_context(ci_from, ci, self.fixing_edge_context)
       self.draw()
       self.wait(1000)
+      self.fixing_index = -1
       self.set_edge_context(ci_from, ci, self.fixed_edge_context)
     self.set_city_context(ci, self.normal_city_context)
     self.pop_index = ci
