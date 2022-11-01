@@ -67,23 +67,25 @@ def main():
 
   global weights
   weights = []
-  weights.append((0, start_city_index))
+  weights.append((0, start_city_index, 0)) # weight, to, from
   vis.append(0, start_city_index)
 
   global mst
   mst = []
   while weights:
     print('<', weights)
-    w, ci = pop_smallest_weight()
-    # mst.append((???, ci))
-    vis.fix(ci)
+    w, v, u = pop_smallest_weight()
+    if u != v:                       # 최초 시작점은 u 와 v 가 같으므로 생략한다
+      mst.append((u, v))             # 결과물에 추가한다
+    vis.fix(v)
     print('>', weights)
+    print(mst)
 
-    adjacents = graph[ci]
+    adjacents = graph[v]
     for adj in adjacents:
       weight = adjacents[adj]
       weights.append((weight, adj))
-      vis.append(weight, adj, ci)
+      vis.append(weight, adj, v)
 
     if len(mst) == 1: break
     break
