@@ -455,7 +455,7 @@ class PrimVisualizer(KruskalVisualizer):
     self.push_index = -1
 
   def update(self, weight, ci, ci_from):
-    print('update', weight, ci)
+    # print('update', weight, ci)
     for i in range(len(self.weights)):
       w, c = self.weights[i]
       if c == ci:
@@ -501,6 +501,10 @@ class PrimVisualizer(KruskalVisualizer):
     self.wait(1000)
     self.update_index = -1
     self.set_edge_context(ci_from, ci, self.grayed_edge_context)
+    self.draw()
+
+  def finish(self):
+    self.current_index = -1
     self.draw()
 
 

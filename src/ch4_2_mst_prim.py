@@ -73,20 +73,20 @@ def main():
 
   global weights
   weights = heapdict()
-  weights[start_city_index] = 0, 0 # weight, from
+  weights[start_city_index] = 0, start_city_index # weight, from
   vis.append(0, start_city_index)
 
   global mst
   mst = []
   while weights:
-    print('<', weights)
+    # print('<', weights)
     v, (w, u) = weights.popitem()
     if u != v:                       # 최초 시작점은 u 와 v 가 같으므로 생략한다
       mst.append((u, v))             # 결과물에 추가한다
     completed.add(v)     # 이번에 v 를 확정한다
     vis.fix(v, u)
-    print('>', weights)
-    print(mst)
+    # print('>', weights)
+    # print(mst)
 
     adjacents = graph[v] # v 에 연결되는 점들 중에서
     for adj in adjacents:
@@ -103,8 +103,10 @@ def main():
         weights[adj] = weight, v   # 추가한다
         vis.append(weight, adj, v)
 
-    if len(completed) >= 3: break
+    # if len(completed) >= 3: break
 
+  vis.finish()
+  print(mst)
 
 if __name__ == '__main__':
   vis = Visualizer('Minimum Spanning Tree - Prim')
