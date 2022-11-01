@@ -111,13 +111,13 @@ def main():
 if __name__ == '__main__':
   vis = Visualizer('Minimum Spanning Tree - Prim')
   idx = 0
+  ds = data_sets[idx]
+  beg, end = ds['beg'], ds['end']
+  cities = five_letter_cities[beg:end]
+  City.apply_index(cities)
+  edges = ds['edges']
   start_city_index = 0
   while True:
-    ds = data_sets[idx]
-    beg, end = ds['beg'], ds['end']
-    cities = five_letter_cities[beg:end]
-    City.apply_index(cities)
-    edges = ds['edges']
     n_cities = len(cities)
     vis.setup(vis.get_main_module())
     vis.draw()
@@ -126,5 +126,16 @@ if __name__ == '__main__':
     if not again: break
     if vis.restart_lshift:
       idx = (idx + 1) % n_data_sets
+      ds = data_sets[idx]
+      beg, end = ds['beg'], ds['end']
+      cities = five_letter_cities[beg:end]
+      City.apply_index(cities)
+      edges = ds['edges']
+    elif vis.restart_rshift:
+      beg = randint(0, 800)
+      end = randint(beg+10, beg+100)
+      cities = five_letter_cities[beg:end]
+      City.apply_index(cities)
+      edges = make_edges(cities, 3/5)
     start_city_index = randint(0, n_cities - 1)
 
