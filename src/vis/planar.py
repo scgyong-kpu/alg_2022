@@ -348,7 +348,6 @@ class KruskalVisualizer(PlanarVisualizer):
     self.draw()
 
 class PrimVisualizer(KruskalVisualizer):
-  def_edge_context = KruskalVisualizer.grayed_edge_context
   grayed_city_context = {
     'city_body_color': Color.WhiteSmoke,
     'city_line_color': Color.LightGray,
@@ -368,13 +367,34 @@ class PrimVisualizer(KruskalVisualizer):
     'edge_value_color': Color.SkyBlue,
     'shows_edge_value': True,
   }
+  bctx_updated = {
+    'body_color': Color.LightGreen,
+    'line_color': Color.DarkGreen,
+    'text_color': Color.text,
+  }
   def_city_context = grayed_city_context
+  def_edge_context = KruskalVisualizer.grayed_edge_context
+  fixed_edge_context = KruskalVisualizer.def_edge_context
+  fixing_edge_context = {
+    'edge_line_color': Color.Crimson,
+    'edge_value_color': Color.DarkRed,
+    'shows_edge_value': True,
+    'edge_line_width': 5,
+  }
+  compare_edge_context = {
+    'edge_line_color': Color.LightGreen,
+    'edge_value_color': Color.DarkGreen,
+    'shows_edge_value': True,
+    'edge_line_width': 5,
+  }
+
 
   def setup(self, data):
     super().setup(data)
     self.weights = []
     self.push_index = -1
     self.pop_index = -1
+    self.update_index = -1
 
   def draw_content(self):
     if hasattr(self.data, 'edges'):
@@ -401,6 +421,8 @@ class PrimVisualizer(KruskalVisualizer):
       elif ci == self.pop_index:
         x += (self.anim_progress) * self.roots_w
         animates_y = True
+      elif ci == self.update_index:
+        ctx = self.bctx_updated
 
       ty = y
       if animates_y and ci != self.pop_index: ty -= self.anim_progress * h
@@ -419,7 +441,29 @@ class PrimVisualizer(KruskalVisualizer):
     self.animate(1000)
     self.push_index = -1
 
-  def fix(self, ci):
+  def update(self, weight, ci):
+    print('update', weight, ci)
+    for i in range(len(self.weights)):
+      w, c = self.weights[i]
+      if c == ci:
+        wi = i
+        break
+    else: return
+
+    self.update_index = ci
+    self.draw()
+    self.wait(500)
+    self.weights[wi] = (weight, ci)
+    self.update_index = -1
+    self.draw()
+    self.wait(500)
+
+  def fix(self, ci, ci_from=None):
+    if ci != ci_from:
+      self.set_edge_context(ci_from, ci, self.fixing_edge_context)
+      self.draw()
+      self.wait(1000)
+      self.set_edge_context(ci_from, ci, self.fixed_edge_context)
     self.set_city_context(ci, self.normal_city_context)
     self.pop_index = ci
     self.animate(1000)
@@ -429,5 +473,15 @@ class PrimVisualizer(KruskalVisualizer):
         self.weights.pop(i)
         break
     self.draw()
+
+  def compare(self, ci, ci_from):
+    self.update_index = ci
+    self.set_edge_context(ci_from, ci, self.compare_edge_context)
+    self.draw()
+    self.wait(1000)
+    self.update_index = -1
+    self.set_edge_context(ci_from, ci, self.candidate_edge_context)
+    self.draw()
+
 
 

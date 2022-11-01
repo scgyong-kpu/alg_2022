@@ -65,6 +65,10 @@ def main():
   build_graph()
   print(f'{n_cities} cities, start={cities[start_city_index]}')
 
+  global completed
+  completed = set()
+  completed.add(start_city_index)
+
   global weights
   weights = []
   weights.append((0, start_city_index, 0)) # weight, to, from
@@ -77,7 +81,8 @@ def main():
     w, v, u = pop_smallest_weight()
     if u != v:                       # 최초 시작점은 u 와 v 가 같으므로 생략한다
       mst.append((u, v))             # 결과물에 추가한다
-    vis.fix(v)
+    completed.add(v)
+    vis.fix(v, u)
     print('>', weights)
     print(mst)
 
@@ -87,7 +92,7 @@ def main():
       weights.append((weight, adj, v))
       vis.append(weight, adj, v)
 
-    if len(mst) >= 2: break
+    if len(completed) >= 1: break
 
 def pop_smallest_weight():
   min_wi = 0
