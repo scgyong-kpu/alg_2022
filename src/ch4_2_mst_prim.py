@@ -41,16 +41,23 @@ n_data_sets = len(data_sets)
 
 # adjacency matric - array of array
 def build_graph():
-  n_cities = len(cities)
   global graph
   graph = [[0 for _ in range(n_cities) ] for _ in range(n_cities)]
   for u,v,w in edges:
     graph[u][v] = w
     graph[v][u] = w
-  print(graph)
+  print_adj_matrix()
+
+def print_adj_matrix():
+  for u in range(n_cities):
+    for v in range(n_cities):
+      print(f'{graph[u][v]:5d}', end='')
+    print()
+  print()
 
 
 def main():
+  global n_cities
   n_cities = len(cities)
 
   build_graph()
