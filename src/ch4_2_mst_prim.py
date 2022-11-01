@@ -63,21 +63,30 @@ def main():
   n_cities = len(cities)
 
   build_graph()
+  print(f'{n_cities} cities, start={cities[start_city_index]}')
+
+  global weights
+  weights = []
+  weights.append((0, start_city_index))
 
 
 if __name__ == '__main__':
   vis = Visualizer('Minimum Spanning Tree - Prim')
   idx = 0
+  start_city_index = 0
   while True:
     ds = data_sets[idx]
     beg, end = ds['beg'], ds['end']
     cities = five_letter_cities[beg:end]
     City.apply_index(cities)
     edges = ds['edges']
+    n_cities = len(cities)
     vis.setup(vis.get_main_module())
     vis.draw()
     main()
     again = vis.end()
     if not again: break
-    idx = (idx + 1) % n_data_sets
+    if vis.restart_lshift:
+      idx = (idx + 1) % n_data_sets
+    start_city_index = randint(0, n_cities - 1)
 
