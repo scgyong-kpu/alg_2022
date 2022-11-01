@@ -90,10 +90,31 @@ def main():
     for adj in adjacents:
       if adj in completed: continue
       weight = adjacents[adj]
-      weights.append((weight, adj, v))
-      vis.append(weight, adj, v)
+      prev_weight = find_weight(adj)
+      print(f'find_weight({adj}, {prev_weight})')
+      if prev_weight == None:
+        weights.append((weight, adj, v))
+        vis.append(weight, adj, v)
+      elif prev_weight > weight:
+        update_weight(adj, weight, v)
+        vis.update(weight, adj)
+      else:
+        vis.compare(adj, v)
 
     if len(completed) >= 3: break
+
+def find_weight(ci):
+  for e in weights:
+    if e[1] == ci:
+      return e[0]
+  return None
+
+def update_weight(ci_to, weight, ci_from):
+  for wi in range(0, len(weights)):
+    if ci_to == weights[wi][1]:
+      weights[wi] = (weight, ci_to, ci_from)
+      return
+  return
 
 def pop_smallest_weight():
   min_wi = 0
