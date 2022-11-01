@@ -88,11 +88,12 @@ def main():
 
     adjacents = graph[v]
     for adj in adjacents:
+      if adj in completed: continue
       weight = adjacents[adj]
       weights.append((weight, adj, v))
       vis.append(weight, adj, v)
 
-    if len(completed) >= 1: break
+    if len(completed) >= 3: break
 
 def pop_smallest_weight():
   min_wi = 0
