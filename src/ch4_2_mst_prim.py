@@ -68,12 +68,14 @@ def main():
   global weights
   weights = []
   weights.append((0, start_city_index))
+  vis.append(0, start_city_index)
 
   global mst
   mst = []
   while weights:
     print('<', weights)
     w, ci = pop_smallest_weight()
+    vis.fix(ci)
     print('>', weights)
 
     if len(mst) == 1: break

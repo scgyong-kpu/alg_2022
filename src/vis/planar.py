@@ -50,7 +50,7 @@ class PlanarVisualizer(Visualizer):
       return self.city_contexts[index]
     return None
 
-  def set_city_context(self, index, context):
+  def set_city_context(self, index, context=None):
     if context == None:
       if index in self.city_contexts:
         del self.city_contexts[index]
@@ -212,13 +212,14 @@ class PlanarVisualizer(Visualizer):
 
 
 class KruskalVisualizer(PlanarVisualizer):
-  def_city_context = {
+  normal_city_context = {
     'city_body_color': Color.LightBlue,
     'city_line_color': Color.DeepSkyBlue,
     'city_name_color': Color.DarkBlue,
     'shows_city_index': True,
     # 'shows_city_coord': True,
   }
+  def_city_context = normal_city_context
   grayed_edge_context = {
     'edge_line_color': Color.WhiteSmoke,
     'edge_value_color': Color.WhiteSmoke,
@@ -348,26 +349,78 @@ class KruskalVisualizer(PlanarVisualizer):
 
 class PrimVisualizer(KruskalVisualizer):
   def_edge_context = KruskalVisualizer.grayed_edge_context
+  grayed_city_context = {
+    'city_body_color': Color.WhiteSmoke,
+    'city_line_color': Color.LightGray,
+    'city_name_color': Color.LightGray,
+    'shows_city_index': True,
+    # 'shows_city_coord': True,
+  }
+  candidate_city_context = {
+    'city_body_color': Color.PaleGreen,
+    'city_line_color': Color.Magenta,
+    'city_name_color': Color.SkyBlue,
+    'shows_city_index': True,
+    # 'shows_city_coord': True,
+  }
+  def_city_context = grayed_city_context
 
   def setup(self, data):
     super().setup(data)
+    self.weights = []
+    self.push_index = -1
+    self.pop_index = -1
+
+  def draw_content(self):
+    if hasattr(self.data, 'edges'):
+      self.draw_all_edges()
+    self.draw_all_cities()
+
+    self.draw_candidates()
+    self.draw_right_pane()
 
   def draw_right_pane(self):
-    x = self.roots_x
+    bx = self.roots_x
     y = self.roots_y
     w = self.roots_w
     h = self.root_h
     u,v = self.appended_edge
-    # for i in range(len(self.data.roots)):
-    #   r = self.data.roots[i]
-    #   ci = self.data.cities[i]
-    #   cr = self.data.cities[r]
-    #   if i == v:
-    #     ctx = self.bctx_current
-    #   else:
-    #     ctx = {}
-    #   self.draw_box([x,y,w,h], text=f'{ci.index}.{ci.name} - {cr.index}.{cr.name}', **ctx)
-    #   y += h
+    animates_y = False
+    for weight, ci in self.weights:
+      city = self.data.cities[ci]
+      text = f'{weight} - {city.index}.{city.name}'
+      ctx = {}#self.bctx_current
+      x = bx
+      if ci == self.push_index:
+        x += (1 - self.anim_progress) * self.roots_w
+      elif ci == self.pop_index:
+        x += (self.anim_progress) * self.roots_w
+        animates_y = True
+
+      ty = y
+      if animates_y and ci != self.pop_index: ty -= self.anim_progress * h
+      self.draw_box([x,ty,w,h], text=text, **ctx)
+      y += h
 
   # def get_edge_context(self, u,v):
+
+  def append(self, weight, ci):
+    self.set_city_context(ci, self.candidate_city_context)
+    self.weights.append((weight, ci))
+    # self.draw()
+    self.push_index = ci
+    self.animate(1000)
+    self.push_index = -1
+
+  def fix(self, ci):
+    self.set_city_context(ci, self.normal_city_context)
+    self.pop_index = ci
+    self.animate(1000)
+    self.pop_index = -1
+    for i in range(len(self.weights)):
+      if self.weights[i][1] == ci:
+        self.weights.pop(i)
+        break
+    self.draw()
+
 
