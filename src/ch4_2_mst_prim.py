@@ -1,6 +1,8 @@
 from data_city import City, five_letter_cities, make_edges
 from vis import PrimVisualizer as Visualizer
 from random import randint, seed, shuffle
+from heapdict import heapdict
+# heapdict module 을 설치해야 한다. pip install heapdict 로 설치한다.
 
 data_sets = [
   {
@@ -70,7 +72,7 @@ def main():
   completed.add(start_city_index)
 
   global weights
-  weights = dict()
+  weights = heapdict()
   weights[start_city_index] = 0, 0 # weight, from
   vis.append(0, start_city_index)
 
@@ -78,7 +80,7 @@ def main():
   mst = []
   while weights:
     print('<', weights)
-    w, v, u = pop_smallest_weight()
+    v, (w, u) = weights.popitem()
     if u != v:                       # 최초 시작점은 u 와 v 가 같으므로 생략한다
       mst.append((u, v))             # 결과물에 추가한다
     completed.add(v)     # 이번에 v 를 확정한다
@@ -102,19 +104,6 @@ def main():
         vis.append(weight, adj, v)
 
     if len(completed) >= 3: break
-
-
-def pop_smallest_weight():
-  min_ci, min_c2 = -1, -1
-  min_w = float('inf')
-  for ci in weights:
-    (w, c2) = weights[ci]
-    if w < min_w:
-      min_w = w
-      min_ci = ci
-      min_c2 = c2
-  del weights[min_ci]
-  return min_w, min_ci, min_c2
 
 
 if __name__ == '__main__':
