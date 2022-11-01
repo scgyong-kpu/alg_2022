@@ -70,8 +70,8 @@ def main():
   completed.add(start_city_index)
 
   global weights
-  weights = []
-  weights.append((0, start_city_index, 0)) # weight, to, from
+  weights = dict()
+  weights[start_city_index] = 0, 0 # weight, from
   vis.append(0, start_city_index)
 
   global mst
@@ -90,31 +90,31 @@ def main():
     for adj in adjacents:
       if adj in completed: continue # 이미 완성된 점은 건드리지 말자
       weight = adjacents[adj]
-      for wi in range(0, len(weights)): # 가중치들을 저장해놓은 곳에서
-        w, c1, c2 = weights[wi]
-        if c1 == adj:    # 연결되는 점에 대한 기록이 있다면
-          if weight < w: # 그리고 이번에 연결되는 점의 가중치가 더 작다면
-            weights[wi] = (weight, adj, v) # 가중치 정보를 교체한다
-            vis.update(weight, adj, v)
-          else:
-            vis.compare(adj, v)
-          break
-      else: # for 에서 break 로 종료하지 않았다면
-        weights.append((weight, adj, v)) # 기록이 없었으므로 추가한다
+      if adj in weights:    # adj 에 대해 가중치가 저장되어 있다면
+        w = weights[adj][0] # 가중치를 가져온다
+        if weight < w:      # 가져온 것보다 비용이 적다면
+          weights[adj] = weight, v    # 교체한다
+          vis.update(weight, adj, v)
+        else:
+          vis.compare(adj, v)
+      else:                        # 저장되어 있지 않다면
+        weights[adj] = weight, v   # 추가한다
         vis.append(weight, adj, v)
 
     if len(completed) >= 3: break
 
 
 def pop_smallest_weight():
-  min_wi = 0
-  min_w = weights[min_wi][0]
-  for wi in range(1, len(weights)):
-    w = weights[wi][0]
+  min_ci, min_c2 = -1, -1
+  min_w = float('inf')
+  for ci in weights:
+    (w, c2) = weights[ci]
     if w < min_w:
       min_w = w
-      min_wi = wi
-  return weights.pop(min_wi)
+      min_ci = ci
+      min_c2 = c2
+  del weights[min_ci]
+  return min_w, min_ci, min_c2
 
 
 if __name__ == '__main__':

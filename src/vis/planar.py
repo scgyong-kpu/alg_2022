@@ -465,13 +465,14 @@ class PrimVisualizer(KruskalVisualizer):
 
     ci_orig = self.connections[ci]
     self.set_edge_context(ci, ci_from, self.compare_edge_context)
-    self.set_edge_context(ci, ci_orig, self.grayed_edge_context)
+    self.set_edge_context(ci, ci_orig, self.compare_edge_context)
     self.update_index = ci
     self.draw()
     self.wait(1000)
     self.weights[wi] = (weight, ci)
     self.update_index = -1
     self.set_edge_context(ci, ci_from, self.candidate_edge_context)
+    self.set_edge_context(ci, ci_orig, self.grayed_edge_context)
     self.draw()
 
   def fix(self, ci, ci_from=None):
@@ -500,7 +501,7 @@ class PrimVisualizer(KruskalVisualizer):
     self.draw()
     self.wait(1000)
     self.update_index = -1
-    self.set_edge_context(ci_from, ci, self.candidate_edge_context)
+    self.set_edge_context(ci_from, ci, self.grayed_edge_context)
     self.draw()
 
 
