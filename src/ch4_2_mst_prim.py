@@ -84,11 +84,10 @@ def main():
     adjacents = graph[v]
     for adj in adjacents:
       weight = adjacents[adj]
-      weights.append((weight, adj))
+      weights.append((weight, adj, v))
       vis.append(weight, adj, v)
 
-    if len(mst) == 1: break
-    break
+    if len(mst) >= 2: break
 
 def pop_smallest_weight():
   min_wi = 0
