@@ -98,7 +98,7 @@ def main():
           weights[adj] = weight, v    # 교체한다
           vis.update(weight, adj, v)
         else:
-          vis.compare(adj, v)
+          vis.compare(adj, v, weight)
       else:                        # 저장되어 있지 않다면
         weights[adj] = weight, v   # 추가한다
         vis.append(weight, adj, v)
