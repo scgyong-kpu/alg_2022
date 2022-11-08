@@ -393,11 +393,15 @@ class PrimVisualizer(KruskalVisualizer):
     super().setup(data)
     self.weights = []
     self.connections = dict()
-    self.push_index = -1
-    self.pop_index = -1
-    self.update_index = -1
     self.fixing_index = -1
     self.current_index = -1
+
+    self.wi_map = []
+    # self.push_index = -1
+    # self.pop_index = -1
+    self.update_index = -1
+    # self.downs = set()
+    # self.ups = set()
 
   def draw_content(self):
     if hasattr(self.data, 'edges'):
@@ -409,30 +413,82 @@ class PrimVisualizer(KruskalVisualizer):
 
   def draw_right_pane(self):
     bx = self.roots_x
-    y = self.roots_y
-    w = self.roots_w
-    h = self.root_h
-    u,v = self.appended_edge
-    animates_y = False
-    for weight, ci in self.weights:
+    by = self.roots_y
+    bw = self.roots_w
+    bh = self.root_h
+
+    for i in range(len(self.weights)):
+      weight, ci = self.weights[i]
+      tx, ty = bx, by + i * bh
+      if self.wi_map:
+        mv = self.wi_map[i]
+        if mv == -10: # push
+          tx += (1 - self.anim_progress) * bw
+        elif mv == -20: # pop
+          tx += self.anim_progress * bw
+        else:
+          # print(f'{mv=} vs {i=} - {self.fixing_index=}')
+          if self.fixing_index >= 0:
+            prog = self.anim_progress
+          else:
+            prog = 1 - self.anim_progress
+          ty += prog * bh * (mv - i)
+        # elif mv < i:
+        #   print(f'{mv=} < {i=}')
+        #   ty = by + mv * bh + (i-mv) * bh * (self.anim_progress)
+
       city = self.data.cities[ci]
       text = f'{weight} - {city.index}.{city.name}'
-      ctx = {}#self.bctx_current
-      x = bx
-      if ci == self.push_index:
-        x += (1 - self.anim_progress) * self.roots_w
-      elif ci == self.pop_index:
-        x += (self.anim_progress) * self.roots_w
-        animates_y = True
-      elif ci == self.update_index:
+      if ci == self.update_index:
         ctx = self.bctx_updated
+        pw, pi = self.prev_weight
+        # pc = self.data.cities[pi]
+        # text = f'{pc.index}.{pc.name} - {pw} > {text}'
+        text = f'{pw} > {text}'
+
       elif ci == self.fixing_index:
         ctx = self.bctx_current
+      else:
+        ctx = { 'no_body': True }
+      self.draw_box([tx,ty,bw,bh], text=text, **ctx)
 
-      ty = y
-      if animates_y and ci != self.pop_index: ty -= self.anim_progress * h
-      self.draw_box([x,ty,w,h], text=text, **ctx)
-      y += h
+    # horz_ci = -1
+    # anim_ty = 0
+    # wi = 0
+    # end_wi = -1
+    # for weight, ci in self.weights:
+    #   city = self.data.cities[ci]
+    #   text = f'{weight} - {city.index}.{city.name}'
+    #   ctx = { 'no_body': True }#self.bctx_current
+    #   x = bx
+    #   if ci == self.push_index:
+    #     x += (1 - self.anim_progress) * self.roots_w
+    #     anim_ty = (1-self.anim_progress) * h
+    #     horz_ci = self.push_index
+    #   elif ci == self.pop_index:
+    #     x += (self.anim_progress) * self.roots_w
+    #     anim_ty = self.anim_progress * h
+    #     horz_ci = self.pop_index
+    #   elif ci == self.update_index:
+    #     ctx = self.bctx_updated
+    #     end_wi = wi + self.up_level
+    #     anim_ty = -(1-self.anim_progress) * h * self.up_level
+    #   elif ci == self.fixing_index:
+    #     ctx = self.bctx_current
+
+    #   if ci != self.update_index:
+    #     if wi <= end_wi:
+    #       anim_ty = (1-self.anim_progress) * h
+    #     else:
+    #       end_wi = -1
+    #       anim_ty = 0
+
+    #   ty = y
+    #   if anim_ty != 0 and ci != horz_ci: ty -= anim_ty
+    #   self.draw_box([x,ty,w,h], text=text, **ctx)
+    #   y += h
+
+    #   wi += 0
 
   def draw_city(self, city, **args):
     if city == self.current_index:
@@ -448,11 +504,28 @@ class PrimVisualizer(KruskalVisualizer):
     if c2 != None:
       self.connections[ci] = c2
       self.set_edge_context(ci, c2, self.candidate_edge_context)
-    self.weights.append((weight, ci))
-    self.push_index = ci
+
+    self.wi_map = [ x for x in range(len(self.weights)) ]
+    for i in range(len(self.weights)):
+      w, c = self.weights[i]
+      if weight < w:
+        self.weights.insert(i, (weight, ci))
+        self.wi_map.insert(i, -10)
+        break
+    else:
+      self.weights.append((weight, ci))
+      self.wi_map.append(-10)
+
+    # self.push_index = ci
     # msec = 1000 if c2 == None else 500
     self.animate(1000)
-    self.push_index = -1
+    # self.push_index = -1
+    # self.sort_weights()
+    self.wi_map = []
+    self.draw()
+
+  def sort_weights(self):
+    self.weights.sort(key=lambda e:e[0])
 
   def update(self, weight, ci, ci_from):
     # print('update', weight, ci)
@@ -461,17 +534,33 @@ class PrimVisualizer(KruskalVisualizer):
       if c == ci:
         wi = i
         break
-    else: return
+    else: 
+      print('update', weight, ci)
+      return
 
     ci_orig = self.connections[ci]
     self.connections[ci] = ci_from
     self.set_edge_context(ci, ci_from, self.candidate_edge_context)
     self.set_edge_context(ci, ci_orig, self.compare_edge_context)
     self.update_index = ci
-    self.weights[wi] = (weight, ci)
-    self.draw()
-    self.wait(1000)
+    self.wi_map = [ x for x in range(len(self.weights)) ]
+    pw, pci = self.weights.pop(wi)
+    self.prev_weight = pw, ci_from
+    self.wi_map.pop(wi)
+    for i in range(len(self.weights)):
+      w, c = self.weights[i]
+      if weight < w:
+        self.weights.insert(i, (weight, ci))
+        self.wi_map.insert(i, wi)
+        break
+    else:
+      self.wi_map.append(len(self.weights))
+      self.weights.append((weight, ci))
+    # print(f'>{self.wi_map=} {self.weights=}')
+    self.animate(1000)
     self.update_index = -1
+    # self.sort_weights()
+    self.wi_map = []
     self.set_edge_context(ci, ci_orig, None)
     self.draw()
 
@@ -482,13 +571,22 @@ class PrimVisualizer(KruskalVisualizer):
       self.fixing_index = ci
       self.set_edge_context(ci_from, ci, self.fixing_edge_context)
       self.draw()
-      self.wait(1000)
-      self.fixing_index = -1
+      self.wait(300)
       self.set_edge_context(ci_from, ci, self.fixed_edge_context)
     self.set_city_context(ci, self.normal_city_context)
-    self.pop_index = ci
+    # self.pop_index = ci
+    found = 0
+    self.wi_map = []
+    for i in range(len(self.weights)):
+      if self.weights[i][1] == ci:
+        found = -1
+        value = -20
+      else:
+        value = i + found
+      self.wi_map.append(value)
+
     self.animate(1000)
-    self.pop_index = -1
+    self.wi_map = []
     for cc in self.data.completed:
       if cc == ci_from: continue
       if self.get_edge_context(ci, cc) == None: continue
@@ -497,9 +595,12 @@ class PrimVisualizer(KruskalVisualizer):
       if self.weights[i][1] == ci:
         self.weights.pop(i)
         break
+
+    self.fixing_index = -1
     self.draw()
 
-  def compare(self, ci, ci_from):
+  def compare(self, ci, ci_from, value = 0):
+    self.prev_weight = value, ci_from
     self.update_index = ci
     self.set_edge_context(ci_from, ci, self.compare_edge_context)
     self.draw()
@@ -513,5 +614,53 @@ class PrimVisualizer(KruskalVisualizer):
     print(self.weights)
     self.draw()
 
+class DijkstraVisualizer(PrimVisualizer):
+  cctx_start = {
+    'city_body_color': Color.Crimson,
+    'city_line_color': Color.line,
+    'city_name_color': Color.text,
+    'shows_city_index': True,
+    # 'shows_city_coord': True,
+  }
 
+  def setup(self, data):
+    super().setup(data)
+    self.start_index = -1
+    self.dists = dict()
 
+  def set_start(self, index):
+    self.start_index = index
+
+  def append(self, weight, ci, c2=None):
+    super().append(weight, ci, c2)
+    self.dists[ci] = weight
+
+  def update(self, weight, ci, ci_from):
+    super().update(weight, ci, ci_from)
+    self.dists[ci] = weight
+
+  def get_city_context(self, index):
+    if index == self.start_index:
+      return self.cctx_start
+    return super().get_city_context(index)
+
+  def draw_city(self, city, **args):
+    super().draw_city(city, **args)
+    if isinstance(city, int):
+      city_index = city
+      city = self.data.cities[city]
+    else:
+      city_index = city.index
+
+    if not city_index in self.dists:
+      return
+
+    text = str(self.dists[city_index])
+
+    xy = self.xy2s([city.x, city.y])
+    name_color = attr(args, 'city_name_color', Color.text)
+
+    radius = self.city_radius
+    xy[1] += self.config.font_size // 2 + radius
+
+    self.draw_text(text, xy, text_color=name_color, **args)
