@@ -1,5 +1,5 @@
 from data_city import City, five_letter_cities, make_edges
-from vis import PrimVisualizer as Visualizer
+from vis import DijkstraVisualizer as Visualizer
 from random import randint, seed, shuffle
 from heapdict import heapdict
 # heapdict module 을 설치해야 한다. pip install heapdict 로 설치한다.
