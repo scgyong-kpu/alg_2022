@@ -76,6 +76,8 @@ def main():
   weights[start_city_index] = 0, start_city_index # weight, from
   vis.append(0, start_city_index)
 
+  vis.set_start(start_city_index)
+
   global mst
   mst = []
   while weights:
