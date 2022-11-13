@@ -714,6 +714,7 @@ class SetCoverVisualizer(Visualizer):
     self.wait(100)
 
   def fix(self, fidx):
+    self.comp_el = None
     self.current_idx = -1
     self.fixing_index = self.f_idxs[fidx]
     self.draw()
