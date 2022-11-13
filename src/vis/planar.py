@@ -803,7 +803,113 @@ class SetCoverVisualizer(Visualizer):
         self.draw_box(rect_inflate([x,y,w,h], -w_10th), f'{e}', border_radius=w//3, **ctx)
       y += self.subset_h
 
+class CitySetCoverVisualizer(PlanarVisualizer):
+  grayed_city_context = PrimVisualizer.grayed_city_context
+  def_edge_context = KruskalVisualizer.grayed_edge_context
+  fixed_edge_context = {
+    'edge_line_color': Color.Teal,
+    'edge_value_color': Color.DarkGreen,
+  }
+  neighbor_city_context = {
+    'city_body_color': Color.LightBlue,
+    'city_line_color': Color.DeepSkyBlue,
+    'city_name_color': Color.Gray,
+    'shows_city_index': True,
+    # 'shows_city_coord': True,
+  }
 
+  def_city_context = grayed_city_context
+  normal_city_context = KruskalVisualizer.normal_city_context
+  def setup(self, data):
+    super().setup(data)
+    self.current_idx = -1
+    self.fixing_index = -1
+
+  def fix(self, fidx):
+    self.comp_el = None
+    self.current_idx = -1
+    self.fixing_index = fidx
+    self.set_city_context(fidx, self.normal_city_context)
+    for v in self.data.graph[fidx]:
+      self.set_edge_context(fidx, v, self.fixed_edge_context)
+      if not v in self.city_contexts:
+        self.set_city_context(v, self.neighbor_city_context)
+    self.draw()
+    self.wait(1000)
+    # self.f_idxs.pop(fidx)
+    self.fixing_index = -1
+    # self.counts = [ 0 for _ in range(len(self.data.f))]
+    self.draw()
+    # self.wait(1000)
+
+  def calc_coords(self):
+    self.legend_right = self.config.screen_width // 3
+    self.legend_bottom = self.config.screen_height // 3
+    self.table_x = self.config.screen_width - self.legend_right #- self.separator_size
+
+    super().calc_coords()
+
+    if not hasattr(self.data, 'f'): return
+    subsets_h = self.config.screen_height - 2 * self.separator_size
+    self.subset_h = subsets_h // (len(self.data.f) + 2)
+    if self.subset_h < self.config.font_size:
+      self.subset_h = self.config.font_size
+
+    self.count_elements()
+
+  def count_elements(self):
+    self.counts = dict()
+    len_f = len(self.data.f)
+    for fi in range(len_f):
+      if self.data.F[fi]:
+        self.counts[fi] = len(self.data.U & self.data.f[fi])
+      else:
+        self.counts[fi] = 0
+
+  def draw_content(self):
+    super().draw_content()
+    self.draw_f_elements()
+
+  def get_el_ctx(self, el, compares=True):
+    if not el in self.data.U:
+      return SetCoverVisualizer.bctx_removed
+    if compares and el == self.comp_el:
+      return SetCoverVisualizer.bctx_comp
+    return SetCoverVisualizer.bctx_normal
+
+  def get_fi_ctx(self, fi, el):
+    # print(f'{fi=} {self.fixing_index=} {self.f_idxs=}')
+    if fi == self.current_idx and el == self.comp_el:
+      return SetCoverVisualizer.bctx_comp
+    if fi == self.fixing_index:
+      if el in self.data.U:
+        return SetCoverVisualizer.bctx_fixing
+      else:
+        return SetCoverVisualizer.bctx_fixing_without_body
+    if self.data.F[fi]:
+      return self.get_el_ctx(el, False)
+    else:
+      return SetCoverVisualizer.bctx_fixed
+
+  def draw_f_elements(self):
+    if not hasattr(self, 'subset_h'): return
+
+    y, w, h = self.separator_size, self.subset_h, self.subset_h
+    w_10th = w // 10
+    max_count = max(self.counts)
+    for i in range(len(self.data.f)):
+      x = self.table_x
+      count = self.counts[i]
+      self.draw_box([x,y,w,h], f'{count}', no_line=True)
+      f_list = sorted(list(self.data.f[i]))
+      if count != 0 and count == max_count:
+        mw = self.subset_h * (len(f_list) + 1)
+        self.draw_box([x,y,mw,h], None, **self.bctx_max_count)
+      for e in f_list:
+        ctx = self.get_fi_ctx(i, e)
+        x += self.subset_h
+        self.draw_box(rect_inflate([x,y,w,h], -w_10th), f'{e}', border_radius=w//3, **ctx)
+      y += self.subset_h
 
 
 
