@@ -664,3 +664,131 @@ class DijkstraVisualizer(PrimVisualizer):
     xy[1] += self.config.font_size // 2 + radius
 
     self.draw_text(text, xy, text_color=name_color, **args)
+
+class SetCoverVisualizer(Visualizer):
+  bctx_removed = {
+    'line_color': Color.LightSalmon,
+    'text_color': Color.LightSalmon,
+  }
+  bctx_normal = {}
+  bctx_fixing = {
+    'line_color': Color.line,
+    'text_color': Color.Crimson,
+    'body_color': Color.IndianRed,
+    'width': 2,
+  }
+  bctx_comp = bctx_fixing
+  bctx_fixed = {
+    'line_color': Color.Teal,
+    'text_color': Color.DarkGreen,
+    'body_color': Color.LightBlue,
+    'width': 2,
+  }
+  bctx_max_count = {
+    'line_color': Color.Green,
+    'no_body': True,
+  }
+  def setup(self, data):
+    # super().setup(data)
+    self.data = data
+    self.counts = []
+    self.current_idx = -1
+    self.fixing_index = -1
+    self.comp_el = None
+
+  def draw(self):
+    self.clear()
+    self.calc_coords()
+    self.draw_content()
+    self.update_display()
+
+  def reset(self):
+    self.f_idxs = [ i for i in range(len(self.data.f))]
+    self.counts = [ 0 for _ in range(len(self.data.f))]
+
+  def comp(self, fi, el=None, cnt=0):
+    self.current_idx = self.f_idxs[fi]
+    self.counts[self.current_idx] = cnt
+    self.comp_el = el
+    self.draw()
+    self.wait(100)
+
+  def fix(self, fidx):
+    self.current_idx = -1
+    self.fixing_index = self.f_idxs[fidx]
+    self.draw()
+    self.wait(1000)
+    self.f_idxs.pop(fidx)
+    self.fixing_index = -1
+    self.counts = [ 0 for _ in range(len(self.data.f))]
+    self.draw()
+    self.wait(1000)
+
+  def calc_coords(self):
+    self.table_x = self.config.screen_width // 2
+    self.cell_w = self.config.font_size * 4
+    self.cell_spacing = self.cell_w * 3 // 2
+    self.cells_in_a_row = self.table_x // self.cell_spacing
+
+    subsets_h = self.config.screen_height - 2 * self.separator_size
+    self.subset_h = subsets_h // len(self.data.f)
+
+  def draw_content(self):
+    # if not hasattr(self.data, 'U'): return
+    self.draw_u_elements()
+    self.draw_f_elements()
+
+  def draw_u_elements(self):
+    sx = self.separator_size
+    sy = self.separator_size
+    x, y, w, h = sx, sy, self.cell_w, self.cell_w
+    u = list(self.data.u)
+    for i in range(len(u)):
+      el = u[i]
+      ctx = self.get_el_ctx(el)
+      # print(f'{el=} {self.comp_el=} {ctx}')
+      self.draw_box([x,y,w,h], f'{el}', border_radius=w//3, **ctx)
+      x += self.cell_spacing
+      if x + self.cell_spacing > self.table_x:
+        x, y = sx, y + self.cell_spacing
+
+  def get_el_ctx(self, el, compares=True):
+    if not el in self.data.U:
+      return self.bctx_removed
+    if compares and el == self.comp_el:
+      return self.bctx_comp
+    return self.bctx_normal
+
+  def get_fi_ctx(self, fi, el):
+    # print(f'{fi=} {self.fixing_index=} {self.f_idxs=}')
+    if fi == self.current_idx and el == self.comp_el:
+      return self.bctx_comp
+    if fi == self.fixing_index:
+      return self.bctx_fixing
+    if fi in self.f_idxs:
+      return self.get_el_ctx(el, False)
+    else:
+      return self.bctx_fixed
+
+  def draw_f_elements(self):
+    y, w, h = self.separator_size, self.subset_h, self.subset_h
+    w_10th = w // 10
+    max_count = max(self.counts)
+    for i in range(len(self.data.f)):
+      x = self.table_x
+      count = self.counts[i]
+      self.draw_box([x,y,w,h], f'{count}', no_line=True)
+      f_list = sorted(list(self.data.f[i]))
+      if count != 0 and count == max_count:
+        mw = self.subset_h * (len(f_list) + 1)
+        self.draw_box([x,y,mw,h], None, **self.bctx_max_count)
+      for e in f_list:
+        ctx = self.get_fi_ctx(i, e)
+        x += self.subset_h
+        self.draw_box(rect_inflate([x,y,w,h], -w_10th), f'{e}', border_radius=w//3, **ctx)
+      y += self.subset_h
+
+
+
+
+
