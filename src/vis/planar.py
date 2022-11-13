@@ -673,8 +673,14 @@ class SetCoverVisualizer(Visualizer):
   bctx_normal = {}
   bctx_fixing = {
     'line_color': Color.line,
-    'text_color': Color.Crimson,
+    'text_color': Color.text,
     'body_color': Color.IndianRed,
+    'width': 2,
+  }
+  bctx_fixing_without_body = {
+    'line_color': Color.line,
+    'text_color': Color.Crimson,
+    'no_body': True,
     'width': 2,
   }
   bctx_comp = bctx_fixing
@@ -725,6 +731,11 @@ class SetCoverVisualizer(Visualizer):
     self.draw()
     self.wait(1000)
 
+  def count_elements(self):
+    for fi in self.f_idxs:
+      self.counts[fi] = len(self.data.U & self.data.f[fi])
+    self.draw()
+
   def calc_coords(self):
     self.table_x = self.config.screen_width // 2
     self.cell_w = self.config.font_size * 4
@@ -765,7 +776,10 @@ class SetCoverVisualizer(Visualizer):
     if fi == self.current_idx and el == self.comp_el:
       return self.bctx_comp
     if fi == self.fixing_index:
-      return self.bctx_fixing
+      if el in self.data.U:
+        return self.bctx_fixing
+      else:
+        return self.bctx_fixing_without_body
     if fi in self.f_idxs:
       return self.get_el_ctx(el, False)
     else:
