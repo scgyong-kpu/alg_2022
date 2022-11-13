@@ -25,7 +25,7 @@ vis.reset()
 C = [] # 결과를 저장할 배열
 
 # 나중에 Loop 로 변경하기 위해 강제 들여쓰기 목적으로 if True 를 쓴다
-if True:
+while U:
     max_i, max_c = -1, 0
     for i in range(len(F)):        # subset 들을 대상으로 Loop 를 돈다
       cnt = 0
@@ -47,4 +47,5 @@ if True:
 # print(f[1] | f[5])    # f[1] 과 f[5] 의 합집합을 출력해 보면 u 와 같다
 # 따라서 위 두 집합을 선택하면 최소 선택으로 u 를 모두 cover 할 수 있다
 
+vis.draw()
 vis.end()
