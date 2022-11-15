@@ -5,4 +5,5 @@ from vis.plane_euler import *
 from vis.plane_closest import *
 from vis.array_sort import *
 from vis.knight import *
+from vis.dynamic import *
 
