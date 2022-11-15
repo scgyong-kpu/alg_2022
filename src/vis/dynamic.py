@@ -158,11 +158,12 @@ class MatrixVisualizer(Visualizer):
 class ChainedMatrixVisualizer(Visualizer):
   def __init__(self, *args):
     super().__init__(*args)
-    self.current_body_vis = 0 #-1
+    self.current_body_vis = -1
     self.select_next_body_visualizer()
 
   def setup(self, data):
     self.data = data
+    self.emp = False
 
   def select_next_body_visualizer(self):
     bv_classes = [
