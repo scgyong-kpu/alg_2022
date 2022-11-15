@@ -224,6 +224,8 @@ class Visualizer:
       else:
         self.screen.blit(img, xy)
 
+    return img.get_size()
+
 class TestVisualizer(Visualizer):
   def draw(self):
     self.clear()
