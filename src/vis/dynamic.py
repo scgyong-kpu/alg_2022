@@ -207,6 +207,10 @@ class ChainedMatrixVisualizer(Visualizer):
     self.draw()
     self.wait(1000)
 
+  def finish(self):
+    self.sub_mult_count = self.i_start = self.i_end = self.i_k = -1
+    self.draw()
+
   def draw(self, wait_msec=0):
     self.clear()
     self.calc_coords()
@@ -430,6 +434,7 @@ class ChainedMatrixVisualizer(Visualizer):
   def handle_event(self, e):
     if e.type == pg.KEYDOWN and e.key == pg.K_v:
       self.select_next_body_visualizer()
+      self.draw()
     super().handle_event(e)
 
 class TableCmmBody:
