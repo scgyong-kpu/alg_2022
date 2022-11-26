@@ -48,8 +48,8 @@ def build_graph():
   for u,v,w in edges:
     graph[u][v] = w
     graph[v][u] = w
-  print(graph)
-  print_adj_matrix()
+  # print(graph)
+  # print_adj_matrix()
 
 def print_adj_matrix():
   for u in range(n_cities):
@@ -65,7 +65,7 @@ def main():
   n_cities = len(cities)
 
   build_graph()
-  print(f'{n_cities} cities, start={cities[start_city_index]}')
+  # print(f'{n_cities} cities, start={cities[start_city_index]}')
 
   global completed
   completed = set()
@@ -106,7 +106,7 @@ def main():
     # if len(completed) >= 3: break
 
   vis.finish()
-  print(mst)
+  # print(mst)
 
 if __name__ == '__main__':
   vis = Visualizer('Minimum Spanning Tree - Prim')
@@ -133,9 +133,18 @@ if __name__ == '__main__':
       edges = ds['edges']
     elif vis.restart_rshift:
       beg = randint(0, 800)
-      end = randint(beg+10, beg+100)
+      end = randint(beg+20, beg+50)
       cities = five_letter_cities[beg:end]
       City.apply_index(cities)
       edges = make_edges(cities, 3/5)
+      print(f"    'beg':{beg}, 'end':{end}, 'edges':[ ", end='')
+      cnt = 0
+      for e in edges:
+        if cnt % 5 == 0: print('\n      ', end='')
+        print(f'{e}, ', end='')
+        cnt += 1
+      print()
+      print(f'    ] # {cities[0]} ~ {cities[-1]} : {len(edges)} edges.')
+      print('  }, {')
     start_city_index = randint(0, n_cities - 1)
 

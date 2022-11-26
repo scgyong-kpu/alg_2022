@@ -611,7 +611,7 @@ class PrimVisualizer(KruskalVisualizer):
 
   def finish(self):
     self.current_index = -1
-    print(self.weights)
+    # print(self.weights)
     self.draw()
 
 class DijkstraVisualizer(PrimVisualizer):

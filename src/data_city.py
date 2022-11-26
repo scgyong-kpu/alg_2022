@@ -1078,7 +1078,7 @@ def make_edges(cities, max_factor=1/4):
     int_dist = int(dist * random.uniform(0.5, 1.5))
     edges.append((c, t, int_dist))
 
-  print(edges, len(edges))
+  # print(edges, len(edges))
   return edges
 
 if __name__ == '__main__':
