@@ -133,10 +133,10 @@ if __name__ == '__main__':
       edges = ds['edges']
     elif vis.restart_rshift:
       beg = randint(0, 800)
-      end = randint(beg+20, beg+50)
+      end = randint(beg+15, beg+25)
       cities = five_letter_cities[beg:end]
       City.apply_index(cities)
-      edges = make_edges(cities, 3/5)
+      edges = make_edges(cities, 3/5, False)
       print(f"    'beg':{beg}, 'end':{end}, 'edges':[ ", end='')
       cnt = 0
       for e in edges:
