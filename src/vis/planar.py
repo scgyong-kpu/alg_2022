@@ -599,7 +599,13 @@ class PrimVisualizer(KruskalVisualizer):
     self.fixing_index = -1
     self.draw()
 
-  def compare(self, ci, ci_from, value = 0):
+  def compare(self, ci, ci_from, value = 0, add=False):
+    if add:
+      if not ci in self.data.weights:
+        return self.append(value, ci, ci_from)
+      w = self.data.weights[ci]
+      if value < w:
+        return self.update(value, ci, ci_from)
     self.prev_weight = value, ci_from
     self.update_index = ci
     self.set_edge_context(ci_from, ci, self.compare_edge_context)
@@ -611,7 +617,7 @@ class PrimVisualizer(KruskalVisualizer):
 
   def finish(self):
     self.current_index = -1
-    print(self.weights)
+    # print(self.weights)
     self.draw()
 
 class DijkstraVisualizer(PrimVisualizer):
@@ -911,5 +917,173 @@ class CitySetCoverVisualizer(PlanarVisualizer):
         self.draw_box(rect_inflate([x,y,w,h], -w_10th), f'{e}', border_radius=w//3, **ctx)
       y += self.subset_h
 
+class MstTspVisualizer(PrimVisualizer):
+  PHASE_MST, PHASE_TSP, PHASE_SHORTCUT = range(3)
+  cctx_start = {
+    'city_body_color': Color.Crimson,
+    'city_line_color': Color.line,
+    'city_name_color': Color.text,
+    'shows_city_index': True,
+    # 'shows_city_coord': True,
+  }
+  cctx_update = {
+    'city_body_color': Color.Black,
+    'city_line_color': Color.line,
+    'city_name_color': Color.text,
+    'shows_city_index': True,
+    # 'shows_city_coord': True,
+  }
+  ectx_mst = {
+    'edge_line_color': Color.Lavender,
+    'edge_line_width': 16,
+    'edge_value_color': Color.Gray,
+    'shows_edge_value': True,
+  }
+  ectx_tsp = {
+    'edge_line_color': Color.Crimson,
+    'edge_value_color': Color.DarkBlue,
+    'shows_edge_value': True,
+  }
+  bctx_mst = {
+    'line_color': Color.line,
+    'text_color': Color.Crimson,
+    'no_body': True,
+    # 'width': 2,
+  }
+  bctx_current = {
+    'line_color': Color.Silver,
+    'body_color': Color.LemonChiffon,
+    'text_color': Color.text,
+    # 'width': 2,
+  }
+  bctx_seq_normal = {
+    'line_color': Color.line,
+    'text_color': Color.Crimson,
+    'no_body': True,
+    # 'width': 2,
+  }
+  bctx_seq_current = {
+    'line_color': Color.DarkBlue,
+    'body_color': Color.LightBlue,
+    'text_color': Color.text,
+  }
+  bctx_seq_dup = {
+    'line_color': Color.DarkBlue,
+    'body_color': Color.LemonChiffon,
+    'text_color': Color.Gray,
+  }
+  def setup(self, data):
+    super().setup(data)
+    self.phase = self.PHASE_MST
+    self.start_index = -1
+    self.current_index = -1
+
+  def calc_coords(self):
+    if self.phase == self.PHASE_MST:
+      return super().calc_coords()
+
+    self.bsize = self.separator_size * 2 // 3
+    self.bdiff = self.bsize * 4 // 3
+
+    self.legend_right = self.config.screen_width // 5
+    self.legend_bottom = self.config.screen_height // 5
+
+    PlanarVisualizer.calc_coords(self)
+
+  def set_start(self, index):
+    self.start_index = index
+
+  def start_shortcut(self):
+    self.phase = self.PHASE_SHORTCUT
+
+  def get_city_context(self, index):
+    if index == self.data.start_index:
+      return self.cctx_start
+    return super().get_city_context(index)
+
+  def draw_right_pane(self):
+    if self.phase == self.PHASE_MST:
+      return super().draw_right_pane()
+    if self.phase == self.PHASE_TSP:
+      self.draw_adjacents()
+    self.draw_sequences()
+
+  def draw_adjacents(self):
+    if not hasattr(self.data, 'mg'): return
+    nc = len(self.data.cities)
+    bx = self.config.screen_width - self.legend_right + self.separator_size
+    bw = self.legend_right - self.separator_size * 3 // 2
+    # print(f'{bx=} {self.config.screen_width=} {self.legend_right=}') #+ self.separator_size
+    y = self.roots_y
+    h = self.bsize
+    # df = h // 8
+    ctx = self.bctx_mst
+    for i in range(nc):
+      if not self.data.mg[i].keys(): continue
+      if i == self.current_index:
+        rect = rect_inflate([bx, y, bw, h], 4)
+        self.draw_box(rect, **self.bctx_current)
+      x = bx
+      tx, ty = x + h // 2, y + h // 2
+      self.draw_text(f'{i}', [tx,ty])
+      for v in self.data.mg[i].keys():
+        x += self.bdiff
+        self.draw_box([x,y,h,h], f'{v}', border_radius=h//3, **ctx)
+      y += self.bdiff
+
+  def draw_sequences(self):
+    if not hasattr(self.data, 'seq'): return
+
+    bx = x = self.separator_size
+    y = self.config.screen_height - self.legend_bottom + self.separator_size
+    w = self.bsize #self.separator_size * 2 // 3
+    dx = self.bdiff #w * 4 // 3
+    maxx = self.config.screen_width - self.legend_right
+
+    for i in range(len(self.data.seq)):
+      n = self.data.seq[i]
+      if n == self.current_index:
+        ctx = self.bctx_seq_current
+      elif self.data.seq[:i].count(n) > 0:
+        ctx = self.bctx_seq_dup
+      else:
+        ctx = self.bctx_seq_normal
+      self.draw_box([x,y,w,w], f'{n}', **ctx)
+      x += dx
+      if x >= maxx:
+        x, y = bx, y + self.bdiff
+
+
+  def finish_mst(self):
+    self.phase = self.PHASE_TSP
+    for u,v,w in self.data.mst_edges:
+      self.set_edge_context(u, v, self.ectx_mst)
+
+  def draw_all_edges(self):
+    super().draw_all_edges()
+    if self.phase == self.PHASE_MST:
+      return
+    if not hasattr(self.data, 'seq'): return
+    prev = None
+    for c in self.data.seq:
+      if prev != None:
+        self.draw_directed_edge(prev, c, **self.ectx_tsp)
+      prev = c
+
+  def add_seq(self, c1, c2):
+    prev = self.city_contexts[c2] if c2 in self.city_contexts else None
+    self.current_index = c2
+    self.set_city_context(c2, self.cctx_update)
+    self.draw()
+    self.wait(1000)
+    self.set_city_context(c2, prev)
+
+  def update_shortcut(self, c):
+    prev = self.city_contexts[c] if c in self.city_contexts else None
+    self.current_index = c
+    self.set_city_context(c, self.cctx_update)
+    self.draw()
+    self.wait(500)
+    self.set_city_context(c, prev)
 
 

@@ -1034,7 +1034,7 @@ def distance(c1, c2):
   dx, dy = c1.x - c2.x, c1.y - c2.y
   return math.sqrt(dx ** 2 + dy ** 2)
 
-def make_edges(cities, max_factor=1/4):
+def make_edges(cities, max_factor=1/4, randomizes_dist=True):
   # print('Edge maker')
   edge_set = set()
 
@@ -1075,10 +1075,13 @@ def make_edges(cities, max_factor=1/4):
   edges = []
   for c, t in edge_list:
     dist = distance(cities[c], cities[t])
-    int_dist = int(dist * random.uniform(0.5, 1.5))
+    if randomizes_dist:
+      int_dist = int(dist * random.uniform(0.5, 1.5))
+    else:
+      int_dist = int(dist)
     edges.append((c, t, int_dist))
 
-  print(edges, len(edges))
+  # print(edges, len(edges))
   return edges
 
 if __name__ == '__main__':
