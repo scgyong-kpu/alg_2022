@@ -748,6 +748,7 @@ class SetCoverVisualizer(Visualizer):
     self.cell_spacing = self.cell_w * 3 // 2
     self.cells_in_a_row = self.table_x // self.cell_spacing
 
+    if not hasattr(self.data, 'f'): return
     subsets_h = self.config.screen_height - 2 * self.separator_size
     self.subset_h = subsets_h // len(self.data.f)
 
@@ -757,6 +758,7 @@ class SetCoverVisualizer(Visualizer):
     self.draw_f_elements()
 
   def draw_u_elements(self):
+    if not hasattr(self.data, 'u'): return
     sx = self.separator_size
     sy = self.separator_size
     x, y, w, h = sx, sy, self.cell_w, self.cell_w
@@ -792,6 +794,7 @@ class SetCoverVisualizer(Visualizer):
       return self.bctx_fixed
 
   def draw_f_elements(self):
+    if not hasattr(self.data, 'f'): return
     y, w, h = self.separator_size, self.subset_h, self.subset_h
     w_10th = w // 10
     max_count = max(self.counts)
@@ -898,7 +901,7 @@ class CitySetCoverVisualizer(PlanarVisualizer):
       return SetCoverVisualizer.bctx_fixed
 
   def draw_f_elements(self):
-    if not hasattr(self, 'subset_h'): return
+    if not hasattr(self.data, 'f'): return
 
     y, w, h = self.separator_size, self.subset_h, self.subset_h
     w_10th = w // 10
@@ -914,8 +917,12 @@ class CitySetCoverVisualizer(PlanarVisualizer):
       for e in f_list:
         ctx = self.get_fi_ctx(i, e)
         x += self.subset_h
-        self.draw_box(rect_inflate([x,y,w,h], -w_10th), f'{e}', border_radius=w//3, **ctx)
+        text = self.get_element_text(e)
+        self.draw_box(rect_inflate([x,y,w,h], -w_10th), text, border_radius=w//3, **ctx)
       y += self.subset_h
+
+  def get_element_text(self, e):
+    return f'{e}'
 
 class MstTspVisualizer(PrimVisualizer):
   PHASE_MST, PHASE_TSP, PHASE_SHORTCUT = range(3)
@@ -1086,4 +1093,75 @@ class MstTspVisualizer(PrimVisualizer):
     self.wait(500)
     self.set_city_context(c, prev)
 
+class VertexCoverVisualizer(CitySetCoverVisualizer):
+  ectx_grayed = {
+    'edge_line_color': Color.WhiteSmoke,
+    'edge_value_color': Color.WhiteSmoke,
+    'shows_edge_value': True,
+  }
+  ectx_matching = {
+    'edge_line_color': Color.Maroon,
+    'edge_line_width': 4,
+    'shows_edge_value': False,
+  }
+  ectx_covered = {
+    'edge_line_color': Color.Crimson,
+    'edge_value_color': Color.DarkBlue,
+    'shows_edge_value': True,
+  }
+
+  def setup(self, data):
+    super().setup(data)
+
+  def get_element_text(self, e):
+    u,v,w = self.data.edges[e]
+    return f'{u}/{v}'
+
+  def calc_coords(self):
+    if self.data.usingSetCover:
+      super().calc_coords()
+      return
+
+    PlanarVisualizer.calc_coords(self)
+
+  def matching(self, u, v):
+    self.set_edge_context(u, v, self.ectx_matching)
+    self.fix_matching(u, v)
+    self.fix_matching(v, u)
+
+  def fix_matching(self, fidx, other):
+    self.comp_el = None
+    self.current_idx = -1
+    self.fixing_index = fidx
+    self.set_city_context(fidx, self.normal_city_context)
+    for v in self.data.graph[fidx]:
+      if v != other:
+        self.set_edge_context(fidx, v, self.fixed_edge_context)
+      if not v in self.city_contexts:
+        self.set_city_context(v, self.neighbor_city_context)
+    self.draw()
+    self.wait(1000)
+    # self.f_idxs.pop(fidx)
+    self.fixing_index = -1
+    # self.counts = [ 0 for _ in range(len(self.data.f))]
+    self.draw()
+    # self.wait(1000)
+
+  # def draw_content(self):
+  #   if self.data.usingSetCover:
+  #     super().draw_content()
+  #     return
+
+    
+
+  # def draw_u_elements(self):
+  #   n_cities = len(self.data.cities)
+  #   n_edges = len(self.data.edges)
+  #   for i in range(n_edges):
+  #     u,v,w = self.data.edges[i]
+  #     if u in self.data.U or v in self.data.U:
+  #       ctx = self.ectx_grayed
+  #     else:
+  #       ctx = self.ectx_covered
+  #     self.draw_edge(u,v,w,**ctx)
 
