@@ -1206,10 +1206,12 @@ class ClusterVisualizer(PlanarVisualizer):
       self.draw_text(f'{round(r)}', [sx, sy])
 
   def draw_next_center(self):
+    if not self.data.dists: return
     city, (dist, center) = self.data.dists.peekitem()
     xy = self.city2s(self.data.cities[city])
     radius = self.config.font_size
     pg.draw.circle(self.screen, Color.line, xy, radius, 1)
+
   def get_city_context(self, index):
     # if index in self.data.centers:
     #   ci = self.data.centers.index(index)
