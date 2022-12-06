@@ -1,5 +1,6 @@
 import math
 from vis.base import *
+from welzl import welzl
 
 # t = 0.0 ~ 2.0 사이로 변화하는 값임. 1 이면 가운데임
 def lerp_2d(xy1, xy2, t=1):
@@ -70,11 +71,13 @@ class PlanarVisualizer(Visualizer):
     else:
       self.edge_contexts[(u,v)] = context
 
-  def draw(self):
+  def draw(self, wait_msec=0):
     self.clear()
     self.calc_coords()
     self.draw_content()
     self.update_display()
+    if wait_msec > 0:
+      self.wait(wait_msec)
 
   def draw_content(self):
     if hasattr(self.data, 'edges'):
@@ -708,11 +711,13 @@ class SetCoverVisualizer(Visualizer):
     self.fixing_index = -1
     self.comp_el = None
 
-  def draw(self):
+  def draw(self, wait_msec=0):
     self.clear()
     self.calc_coords()
     self.draw_content()
     self.update_display()
+    if wait_msec > 0:
+      self.wait(wait_msec)
 
   def reset(self):
     self.f_idxs = [ i for i in range(len(self.data.f))]
@@ -1165,3 +1170,75 @@ class VertexCoverVisualizer(CitySetCoverVisualizer):
   #       ctx = self.ectx_covered
   #     self.draw_edge(u,v,w,**ctx)
 
+class ClusterVisualizer(PlanarVisualizer):
+  CityColors = Color.set1 + Color.set2
+  LineColors = Color.pastel1 + Color.pastel2
+  def setup(self, data, uses_welzl=False):
+    super().setup(data)
+    self.uses_welzl = uses_welzl
+  def compare(self, city, center, dist):
+    self.draw()
+    if dist > 0:
+      self.draw_line_to_center(city, center, int(dist), 2)
+    self.update_display()
+    self.wait(100)
+  def draw_content(self):
+    if self.uses_welzl:
+      self.draw_cluster_circles()
+    self.draw_lines_to_center()
+    self.draw_all_cities()
+    self.draw_next_center()
+  def draw_cluster_circles(self):
+    subs = [ [] for center in self.data.centers ]
+    for i in range(len(self.data.cities)):
+      if not i in self.data.dists: continue
+      dist, center = self.data.dists[i]
+      ci = self.data.centers.index(center)
+      subs[ci].append(self.data.cities[i])
+    for ci in range(len(self.data.centers)):
+      x, y, r = welzl(subs[ci])
+      sx, sy = self.o2s(x, y)
+      dx, _ = self.o2s(x+r, y)
+      radius = dx - sx
+      color = self.LineColors[ci % len(self.LineColors)]
+      pg.draw.circle(self.screen, color, [sx, sy], radius, 1)
+      pg.draw.circle(self.screen, color, [sx, sy], self.separator_size // 2, 1)
+      self.draw_text(f'{round(r)}', [sx, sy])
+
+  def draw_next_center(self):
+    city, (dist, center) = self.data.dists.peekitem()
+    xy = self.city2s(self.data.cities[city])
+    radius = self.config.font_size
+    pg.draw.circle(self.screen, Color.line, xy, radius, 1)
+  def get_city_context(self, index):
+    # if index in self.data.centers:
+    #   ci = self.data.centers.index(index)
+    #   return {
+    #     'city_name_color': Color.DarkBlue,
+    #     'city_body_color': self.CityColors[ci % len(self.CityColors)]
+    #   }
+    if not index in self.data.dists: return {}
+    dist, center = self.data.dists[index]
+    ci = self.data.centers.index(center)
+    color = self.CityColors[ci % len(self.CityColors)]
+    return {
+      'city_name_color': color_darker(color),
+      'city_body_color': color,
+    }
+
+  def draw_lines_to_center(self):
+    n_cities = len(self.data.cities)
+    for i in range(n_cities):
+      if i in self.data.centers: continue
+      if not i in self.data.dists: continue
+      dist, center = self.data.dists[i]
+      self.draw_line_to_center(i, center, int(-dist))
+
+  def draw_line_to_center(self, city, center, dist, diff=1):
+    ci = self.data.centers.index(center)
+    color = self.LineColors[ci % len(self.LineColors)]
+    self.draw_edge(city, center, edge_line_color=color)
+
+    x, y = self.city2s(self.data.cities[city])
+    y += diff * (self.config.font_size // 2 + self.city_radius)
+    self.draw_text(f'{int(dist)}', [x, y], text_color=color)

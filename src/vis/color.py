@@ -6,6 +6,10 @@ def color_argb(value):
 def color_argb_array(array): 
   return [ color_argb(value) for value in array ]
 
+def color_darker(color):
+  r, g, b = color
+  return [ r // 2, g // 2, b // 2 ]
+
 class Color:
   # from D3.js colors
   pair = color_argb_array(["#a6cee3","#1f78b4","#b2df8a","#33a02c","#fb9a99","#e31a1c","#fdbf6f","#ff7f00","#cab2d6","#6a3d9a","#ffff99","#b15928"])
