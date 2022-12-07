@@ -21,6 +21,8 @@ class Cluster:
 
     self.dists[next_center] = (0, next_center)
     self.centers.append(next_center)
+    for i in range(n_cities):
+      if i in self.centers: continue
 
   # i1 번째 도시와 i2 번째 도시 사이의 거리를 구한다
   def distance_between(self, i1, i2):
