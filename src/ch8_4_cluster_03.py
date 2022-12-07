@@ -12,6 +12,11 @@ class Cluster:
     self.centers = []
 
   def addCenter(self):
+    n_cities = len(self.cities)
+    if not self.centers: # 첫번째 점일경우
+      next_center = randint(0, n_cities - 1)
+    else:
+      next_center, _ = self.dists.popitem()
     vis.draw()
 
   # i1 번째 도시와 i2 번째 도시 사이의 거리를 구한다
