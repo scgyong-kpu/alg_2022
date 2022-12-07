@@ -1,5 +1,6 @@
 from data_city import five_letter_cities, City
 from vis import ClusterVisualizer as Visualizer
+# from vis import Dummy as Visualizer
 from heapdict import heapdict
 from random import seed, randint
 from math import sqrt
@@ -29,6 +30,15 @@ class Cluster:
       vis.compare(i, next_center,
         d if next_center != self.dists[i][0] else 0)
 
+    # centers 에 갯수가 곧 cluster 의 갯수이다
+    subs = [ [] for _ in self.centers ]
+    for i in range(n_cities): # 모든 도시들에 대하여
+      dist, center = self.dists[i] # 센터를 얻는다
+      ci = self.centers.index(center) # 몇번째 센터인지 알아낸후
+      subs[ci].append(self.cities[i]) # 클러스터에 점을 추가한다
+
+    print(subs)
+
     vis.draw()
 
   # i1 번째 도시와 i2 번째 도시 사이의 거리를 구한다
@@ -51,7 +61,7 @@ while True:
   if gen:
     # 약 200개까지의 도시를 임의로 선택한다
     beg = randint(0, 100)
-    end = randint(beg+15, beg+200)
+    end = randint(beg+15, beg+20)
     cities = five_letter_cities[beg:end]
     # x좌표, y좌표 별로 정렬한다
     cities.sort(key=lambda c: c.x*10000+c.y)
