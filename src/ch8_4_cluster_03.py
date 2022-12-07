@@ -37,7 +37,13 @@ class Cluster:
       ci = self.centers.index(center) # 몇번째 센터인지 알아낸후
       subs[ci].append(self.cities[i]) # 클러스터에 점을 추가한다
 
-    print(subs)
+    # print(subs)
+    max_r = 0
+    for sub in subs:
+      x, y, r = welzl(sub)
+      if max_r < r: max_r = r
+      print(f'{len(sub)} cities: ({round(x)}, {round(y)}) radius: ({round(r)})')
+    print(f'----- [{len(subs)} clusters] max radius = {round(max_r)} -----')
 
     vis.draw()
 
@@ -61,7 +67,7 @@ while True:
   if gen:
     # 약 200개까지의 도시를 임의로 선택한다
     beg = randint(0, 100)
-    end = randint(beg+15, beg+20)
+    end = randint(beg+15, beg+200)
     cities = five_letter_cities[beg:end]
     # x좌표, y좌표 별로 정렬한다
     cities.sort(key=lambda c: c.x*10000+c.y)
