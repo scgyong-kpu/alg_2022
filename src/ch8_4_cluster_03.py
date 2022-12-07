@@ -24,7 +24,7 @@ class Cluster:
     for i in range(n_cities):
       if i in self.centers: continue
       d = self.distance_between(next_center, i)
-      if d < self.dists[i][0]:
+      if not i in self.dists or d < self.dists[i][0]:
         self.dists[i] = (d, next_center)
       # if not i in self.dists or d < -self.dists[i][0]:
       #   self.dists[i] = (-d, next_center)
