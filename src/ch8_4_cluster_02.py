@@ -18,7 +18,10 @@ class Cluster:
       # 이번에 최초의 점이 추가되는 것이면 랜덤하게 고른다
       next_center = randint(0, n_cities-1)
     else:
-      pass #좀이따가합시다
+      # 알려진 거리가 가장 먼 것을 고른다
+      # min-heap 이라서 최소값을 고르지만, 
+      #  거리에 -1 을 곱한 값이라서 최소값이 가장 먼거리다
+      next_center, _ = self.dists.popitem()
 
     # 추가된 센터를 기록한다
     self.dists[next_center] = (0, next_center)
@@ -29,9 +32,9 @@ class Cluster:
       if i in self.centers: continue
       # 방금 추가된 센터까지의 거리를 구한다
       d = self.distance_between(next_center, i)
-      if not i in self.dists or d < self.dists[i][0]:
+      if not i in self.dists or d < -self.dists[i][0]:
         # 더 가까우면 업데이트한다
-        self.dists[i] = (d, next_center)
+        self.dists[i] = (-d, next_center)
 
       vis.compare(i, next_center,
         d if next_center != self.dists[i][1] else 0)
