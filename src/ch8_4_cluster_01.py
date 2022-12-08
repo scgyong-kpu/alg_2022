@@ -8,10 +8,11 @@ from welzl import welzl
 class Cluster:
   def __init__(self, cities):
     self.cities = cities
-    self.dists = heapdict()
-    self.centers = []
+    self.reset()
 
   def addCenter(self):
+    next_center = self.dists.popitem()
+
     vis.draw()
 
   # i1 번째 도시와 i2 번째 도시 사이의 거리를 구한다
@@ -25,6 +26,13 @@ class Cluster:
   def reset(self):
     self.dists = heapdict()
     self.centers = []
+
+    INF = float('inf')
+    for i in range(len(cities)):
+      self.dists[i] = (INF, i)
+
+    first_center = randint(0, len(cities) - 1)
+    self.dists[first_center] = (0, first_center)
 
 # Random Seed 를 정해 두어 랜덤이 정해진 순서대로 나오도록 한다
 seed('Cluster')
