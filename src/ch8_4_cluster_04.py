@@ -28,7 +28,7 @@ class Cluster:
       # 방금 추가된 센터까지의 거리를 구해서
       d = self.distance_between(this_center, i)
       # dists 딕셔너리에 갱신해준다
-      self.dists[i] = (d, this_center)
+      self.dists[i] = (-d, this_center)
 
       # 각 점들에 대해 갱신하는 과정을 보여주자
       vis.compare(i, this_center,
