@@ -44,7 +44,16 @@ class Cluster:
       # ci 번째 클러스터에 i 번째 도시를 넣어주자
       clusters[ci].append(self.cities[i])
 
-    print(clusters)
+    # print(clusters)
+    max_r = 0
+    for ci in range(len(self.centers)):
+      cities = clusters[ci]
+      x, y, r = welzl(cities)
+      if max_r < r: max_r = r
+      center_city = self.cities[self.centers[ci]]
+      print(f'{center_city} - {len(cities)} cities: ({round(x)},{round(y)}) r: {round(r)}')
+    print(f'----- [{len(clusters)} clusters] max R = {round(max_r)} -----')
+
     vis.draw()
 
   # i1 번째 도시와 i2 번째 도시 사이의 거리를 구한다
@@ -67,7 +76,7 @@ while True:
   if gen:
     # 약 200개까지의 도시를 임의로 선택한다
     beg = randint(0, 100)
-    end = beg+25 #randint(beg+15, beg+200)
+    end = randint(beg+15, beg+200)
     cities = five_letter_cities[beg:end]
     # x좌표, y좌표 별로 정렬한다
     cities.sort(key=lambda c: c.x*10000+c.y)
