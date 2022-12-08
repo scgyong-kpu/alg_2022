@@ -11,9 +11,11 @@ class Cluster:
     self.reset()
 
   def addCenter(self):
-    next_center = self.dists.popitem()
+    next_center, _ = self.dists.popitem()
+    self.dists[next_center] = (0, next_center)
+    self.centers.append(next_center)
 
-    vis.draw()
+    # vis.draw()
 
   # i1 번째 도시와 i2 번째 도시 사이의 거리를 구한다
   def distance_between(self, i1, i2):
