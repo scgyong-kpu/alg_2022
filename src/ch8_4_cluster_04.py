@@ -23,6 +23,13 @@ class Cluster:
     self.dists[this_center] = (0, this_center)
     self.centers.append(this_center)
 
+    # 모든 점에 대해 거리갱신을 (필요하면) 합니다
+    for i in range(n_cities):
+      # 방금 추가된 센터까지의 거리를 구해서
+      d = self.distance_between(this_center, i)
+      # dists 딕셔너리에 갱신해준다
+      self.dists[i] = (d, this_center)
+
     vis.draw()
 
   # i1 번째 도시와 i2 번째 도시 사이의 거리를 구한다
