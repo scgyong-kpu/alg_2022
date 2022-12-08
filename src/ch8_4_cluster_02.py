@@ -25,6 +25,8 @@ class Cluster:
     self.centers.append(next_center)
 
     for i in range(n_cities):
+      # 이미 센터인 점은 계산할 필요없다
+      if i in self.centers: continue
       # 방금 추가된 센터까지의 거리를 구한다
       d = self.distance_between(next_center, i)
       if not i in self.dists or d < self.dists[i][0]:
