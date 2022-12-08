@@ -39,6 +39,24 @@ class Cluster:
       vis.compare(i, next_center,
         d if next_center != self.dists[i][1] else 0)
 
+    clusters = [ [] for _ in self.centers ]
+    for i in range(n_cities):
+      # 정점 i 가 어느 center 와 가까운지 알아내자
+      dist, center = self.dists[i]
+      # center 가 몇번째 센터인지 알아내자 (ci = center index)
+      ci = self.centers.index(center)
+      # ci 번째 클러스터에 i 번째 도시를 넣어주자
+      clusters[ci].append(self.cities[i])
+
+    # print(clusters)
+
+    max_r = 0
+    for cl in clusters: # 각 클러스터에 포함된 도시들에 대하여
+      x, y, r = welzl(cl) # 중심점과 반지름을 구한다
+      if max_r < r: max_r = r # 반지름 중 최대값을 구한다
+      print(f'{len(cl)} cities: ({round(x)}, {round(y)}) R: {round(r)}')
+    print(f'----- [{len(clusters)} clusters] max R = {round(max_r)} -----')
+
     vis.draw()
 
   # i1 번째 도시와 i2 번째 도시 사이의 거리를 구한다
