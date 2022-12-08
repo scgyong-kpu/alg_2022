@@ -30,6 +30,10 @@ class Cluster:
       # dists 딕셔너리에 갱신해준다
       self.dists[i] = (d, this_center)
 
+      # 각 점들에 대해 갱신하는 과정을 보여주자
+      vis.compare(i, this_center,
+        d if this_center != self.dists[i][1] else 0)
+
     vis.draw()
 
   # i1 번째 도시와 i2 번째 도시 사이의 거리를 구한다
