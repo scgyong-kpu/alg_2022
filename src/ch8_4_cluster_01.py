@@ -36,6 +36,17 @@ class Cluster:
       vis.compare(i, next_center,
         d if next_center != self.dists[i][0] else 0)
 
+    clusters = [ [] for _ in self.centers ]
+    for i in range(n_cities):
+      # 정점 i 가 어느 center 와 가까운지 알아내자
+      dist, center = self.dists[i]
+      # center 가 몇번째 센터인지 알아내자 (center index)
+      ci = self.centers.index(center)
+      # ci 번째 클러스터에 i 번째 도시를 넣어주자
+      clusters[ci].append(self.cities[i])
+
+    print(clusters)
+
     vis.draw()
 
   # i1 번째 도시와 i2 번째 도시 사이의 거리를 구한다
@@ -66,7 +77,7 @@ while True:
   if gen:
     # 약 200개까지의 도시를 임의로 선택한다
     beg = randint(0, 100)
-    end = randint(beg+15, beg+200)
+    end = randint(beg+25, beg+30)
     cities = five_letter_cities[beg:end]
     # x좌표, y좌표 별로 정렬한다
     cities.sort(key=lambda c: c.x*10000+c.y)
