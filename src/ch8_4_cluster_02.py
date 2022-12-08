@@ -24,6 +24,12 @@ class Cluster:
     self.dists[next_center] = (0, next_center)
     self.centers.append(next_center)
 
+    for i in range(n_cities):
+      # 방금 추가된 센터까지의 거리를 구한다
+      d = self.distance_between(next_center, i)
+      if not i in self.dists or d < self.dists[i][0]:
+        # 더 가까우면 업데이트한다
+        self.dists[i] = (d, next_center)
 
     vis.draw()
 
