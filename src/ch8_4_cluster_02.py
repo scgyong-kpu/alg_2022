@@ -33,6 +33,9 @@ class Cluster:
         # 더 가까우면 업데이트한다
         self.dists[i] = (d, next_center)
 
+      vis.compare(i, next_center,
+        d if next_center != self.dists[i][1] else 0)
+
     vis.draw()
 
   # i1 번째 도시와 i2 번째 도시 사이의 거리를 구한다
